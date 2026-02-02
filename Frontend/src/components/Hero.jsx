@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
   const [heroImageId, setHeroImageId] = useState(null);
@@ -43,9 +44,12 @@ export default function Hero() {
         </p>
         
         <div className="flex gap-4 flex-wrap">
-          <button className="bg-white hover:bg-gray-100 text-blue-900 font-semibold px-8 py-3 rounded-lg transition">
-            Get Consultation
-          </button>
+         <Link
+  to="/contact"
+  className="inline-block bg-white hover:bg-gray-100 text-blue-900 font-semibold px-8 py-3 rounded-lg transition"
+>
+  Get Consultation
+</Link>
           <button className="border-2 border-white text-white hover:bg-white hover:text-blue-900 font-semibold px-8 py-3 rounded-lg transition">
             Learn More
           </button>

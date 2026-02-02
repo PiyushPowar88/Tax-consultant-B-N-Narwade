@@ -53,10 +53,43 @@ export default function Navbar() {
   to="/location"
   className="text-gray-700 hover:text-green-600 font-medium transition flex items-center gap-1"
 >
-  Location📍 
+  Location 
 </Link>
+<a
+  href="https://www.incometax.gov.in/iec/foportal/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-gray-700 hover:text-teal-600 font-medium transition flex items-center gap-1"
+>
+  Income Tax Portal
+</a>
 
+<a
+  href="https://www.gst.gov.in/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-gray-700 hover:text-teal-600 font-medium transition flex items-center gap-1"
+>
+  Goods and Services Tax
+</a>
 
+<a
+  href="https://www.mahagst.gov.in/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-gray-700 hover:text-teal-600 font-medium transition flex items-center gap-1"
+>
+  Mahagst
+</a>
+
+<a
+  href="https://www.icegate.gov.in/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-gray-700 hover:text-teal-600 font-medium transition flex items-center gap-1"
+>
+  ICEGATE
+</a>
 
           
           {token ? (
@@ -89,7 +122,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden mt-4 space-y-3 pb-3 border-t pt-3">
+  <div className="md:hidden mt-4 space-y-3 pb-3 border-t pt-3">
           <Link to="/" className="block text-gray-700 hover:text-teal-600 font-medium transition">Home</Link>
           <Link to="/services" className="block text-gray-700 hover:text-teal-600 font-medium transition">Services</Link>
           <Link to="/contact" className="block text-gray-700 hover:text-teal-600 font-medium transition">Contact</Link>
@@ -97,8 +130,52 @@ export default function Navbar() {
   to="/location"
   className="block text-gray-700 hover:text-green-600 font-medium transition"
 >
-  Location📍 
+  Location
 </Link>
+
+
+
+{/* Income Tax */}
+<a
+  href="https://www.incometax.gov.in/iec/foportal/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block text-gray-700 hover:text-teal-600 font-medium transition"
+>
+  Income Tax
+</a>
+
+{/* GST */}
+<a
+  href="https://www.gst.gov.in/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block text-gray-700 hover:text-teal-600 font-medium transition"
+>
+  GST
+</a>
+
+{/* MahaGST */}
+<a
+  href="https://www.mahagst.gov.in/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block text-gray-700 hover:text-teal-600 font-medium transition"
+>
+  MahaGST
+</a>
+
+{/* ICEGATE */}
+<a
+  href="https://www.icegate.gov.in/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block text-gray-700 hover:text-teal-600 font-medium transition"
+>
+  ICEGATE
+</a>
+
+
 
 
 

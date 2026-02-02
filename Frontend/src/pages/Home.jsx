@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
+import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -446,7 +447,7 @@ export default function Home() {
   to="/contact"
   className="block text-center w-full bg-white hover:bg-gray-50 text-teal-600 font-bold py-4 rounded-xl transition duration-200 transform hover:scale-105 active:scale-95 shadow-lg"
 >
-  Schedule Consultation
+  Schedule Free Consultation
 </Link>
             </div>
           </div>
@@ -503,15 +504,19 @@ export default function Home() {
             consultation.
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <button className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-bold px-10 py-4 rounded-xl transition duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
-              Contact Us Today
-            </button>
+           <Link
+  to="/contact"
+  className="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-bold px-10 py-4 rounded-xl transition duration-200 transform hover:scale-105 active:scale-95 shadow-lg"
+>
+  Contact Us Today
+</Link>
             <button className="border-2 border-teal-500 text-teal-600 hover:bg-teal-50 font-bold px-10 py-4 rounded-xl transition duration-200">
               Learn More
             </button>
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
