@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const [ownerImageId, setOwnerImageId] = useState(null);
@@ -441,9 +442,12 @@ export default function Home() {
                 </div>
               </div>
 
-              <button className="w-full bg-white hover:bg-gray-50 text-teal-600 font-bold py-4 rounded-xl transition duration-200 transform hover:scale-105 active:scale-95 shadow-lg">
-                Schedule Consultation
-              </button>
+             <Link
+  to="/contact"
+  className="block text-center w-full bg-white hover:bg-gray-50 text-teal-600 font-bold py-4 rounded-xl transition duration-200 transform hover:scale-105 active:scale-95 shadow-lg"
+>
+  Schedule Consultation
+</Link>
             </div>
           </div>
         </div>
