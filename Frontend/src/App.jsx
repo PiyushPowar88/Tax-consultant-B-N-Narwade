@@ -5,6 +5,7 @@ import Contact from "./pages/Contact";
 import AdminLogin from "./pages/AdminLogin";
 import Dashboard from "./admin/Dashboard";
 import AdminSignup from "./pages/AdminSignup";
+import ServiceDetails from "./pages/ServiceDetails";
 
 
 
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin-signup" element={<AdminSignup />} />
+        <Route path="/services/:id" element={<ServiceDetails />} />
 
       </Routes>
     </BrowserRouter>

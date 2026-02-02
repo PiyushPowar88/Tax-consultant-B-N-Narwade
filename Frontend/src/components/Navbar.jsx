@@ -49,6 +49,15 @@ export default function Navbar() {
           <Link to="/" className="text-gray-700 hover:text-teal-600 font-medium transition">Home</Link>
           <Link to="/services" className="text-gray-700 hover:text-teal-600 font-medium transition">Services</Link>
           <Link to="/contact" className="text-gray-700 hover:text-teal-600 font-medium transition">Contact</Link>
+          <a
+  href="https://share.google/jvrp70usXmGEct5FD"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-gray-700 hover:text-green-600 font-medium transition flex items-center gap-1"
+>
+  📍 Location
+</a>
+
           
           {token ? (
             <>
@@ -84,7 +93,15 @@ export default function Navbar() {
           <Link to="/" className="block text-gray-700 hover:text-teal-600 font-medium transition">Home</Link>
           <Link to="/services" className="block text-gray-700 hover:text-teal-600 font-medium transition">Services</Link>
           <Link to="/contact" className="block text-gray-700 hover:text-teal-600 font-medium transition">Contact</Link>
-          
+          <a
+  href="https://share.google/jvrp70usXmGEct5FD"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block text-gray-700 hover:text-green-600 font-medium transition"
+>
+  📍 Location
+</a>
+
           {token ? (
             <>
               <Link to="/dashboard" className="block text-gray-700 hover:text-teal-600 font-medium transition">
