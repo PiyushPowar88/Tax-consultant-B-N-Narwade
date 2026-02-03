@@ -143,12 +143,12 @@ export default function Footer() {
 
               <li className="flex gap-3">
                 <FaPhone />
-                +91-XXXXXXXXXX
+                +91-7498416057
               </li>
 
               <li className="flex gap-3">
                 <FaEnvelope />
-                info@bnnarwade.com
+                narwadebn.gst@gmail.com
               </li>
 
               <li className="flex gap-3">
@@ -162,19 +162,30 @@ export default function Footer() {
             {/* Social Icons */}
             <div className="flex gap-4 mt-6">
 
-              <a href="#" className="bg-white/20 p-3 rounded-full hover:bg-white/30">
-                <FaLinkedinIn />
-              </a>
+              <a
+  href="https://www.linkedin.com/in/b-n-narwade-and-co-7993b43aa?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="bg-white/20 p-3 rounded-full hover:bg-white/30 transition"
+>
+  <FaLinkedinIn />
+</a>
 
               <a href="#" className="bg-white/20 p-3 rounded-full hover:bg-white/30">
                 <FaXTwitter />
               </a>
 
-              <a href="#" className="bg-white/20 p-3 rounded-full hover:bg-white/30">
+              <a href="https://www.facebook.com/share/1F3d713uPZ/" 
+              target="_blank"
+  rel="noopener noreferrer"
+              className="bg-white/20 p-3 rounded-full hover:bg-white/30">
                 <FaFacebookF />
               </a>
 
-              <a href="#" className="bg-white/20 p-3 rounded-full hover:bg-white/30">
+              <a href="https://www.instagram.com/bnnarwadeandco?igsh=emk2MmIwbGtxMTJy" 
+               target="_blank"
+  rel="noopener noreferrer"
+              className="bg-white/20 p-3 rounded-full hover:bg-white/30">
                 <FaInstagram />
               </a>
 

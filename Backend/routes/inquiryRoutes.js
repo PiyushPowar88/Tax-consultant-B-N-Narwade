@@ -15,4 +15,35 @@ router.post("/", (req,res)=>{
  );
 });
 
+/* Get All Inquiries (Admin) */
+router.get("/", (req, res) => {
+  db.query(
+    "SELECT * FROM inquiries ORDER BY id DESC",
+    (err, result) => {
+      if (err) return res.status(500).send(err);
+
+      res.send(result);
+    }
+  );
+});
+
+
+/* Mark As Read */
+router.put("/read/:id", (req, res) => {
+
+  const id = req.params.id;
+
+  db.query(
+    "UPDATE inquiries SET is_read = 1 WHERE id = ?",
+    [id],
+    (err) => {
+      if (err) return res.status(500).send(err);
+
+      res.send({ message: "Marked as Read" });
+    }
+  );
+
+});
+
+
 export default router;

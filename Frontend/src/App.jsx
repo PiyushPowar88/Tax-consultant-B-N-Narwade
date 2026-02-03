@@ -7,6 +7,7 @@ import Dashboard from "./admin/Dashboard";
 import AdminSignup from "./pages/AdminSignup";
 import ServiceDetails from "./pages/ServiceDetails";
 import Location from "./pages/Location";
+import AdminSecret from "./pages/AdminSecret";
 
 
 
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/admin-signup" element={<AdminSignup />} />
         <Route path="/services/:id" element={<ServiceDetails />} />
         <Route path="/location" element={<Location />} />
+<Route path="/admin-secret" element={<AdminSecret />} />
 
 
       </Routes>
