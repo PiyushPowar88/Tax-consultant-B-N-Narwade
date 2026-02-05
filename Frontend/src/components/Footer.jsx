@@ -11,6 +11,7 @@ import {
   FaPhone,
   FaEnvelope,
   FaGlobe,
+  FaWhatsapp,
 } from "react-icons/fa6";
 
 export default function Footer() {
@@ -146,6 +147,11 @@ export default function Footer() {
                 +91-7498416057
               </li>
 
+               <li className="flex gap-3">
+                <FaWhatsapp />
+                +91-7498416057
+              </li>
+
               <li className="flex gap-3">
                 <FaEnvelope />
                 narwadebn.gst@gmail.com
@@ -171,9 +177,9 @@ export default function Footer() {
   <FaLinkedinIn />
 </a>
 
-              <a href="#" className="bg-white/20 p-3 rounded-full hover:bg-white/30">
+              {/* <a href="#" className="bg-white/20 p-3 rounded-full hover:bg-white/30">
                 <FaXTwitter />
-              </a>
+              </a> */}
 
               <a href="https://www.facebook.com/share/1F3d713uPZ/" 
               target="_blank"

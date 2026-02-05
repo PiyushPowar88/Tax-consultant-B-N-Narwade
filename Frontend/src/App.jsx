@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+
 import Home from "./pages/Home";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
@@ -9,12 +11,27 @@ import ServiceDetails from "./pages/ServiceDetails";
 import Location from "./pages/Location";
 import AdminSecret from "./pages/AdminSecret";
 
+/* ===== Scroll + Width Fix Component ===== */
+function ScrollFix() {
+  const location = useLocation();
 
+  useEffect(() => {
+    // Reset body styles on every route change
+    document.body.style.overflow = "auto";
+    document.body.style.width = "100%";
+    document.body.style.position = "static";
+  }, [location]);
 
+  return null;
+}
 
 export default function App() {
   return (
     <BrowserRouter>
+      
+      {/* Fix layout shrink on route change */}
+      <ScrollFix />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
@@ -24,10 +41,9 @@ export default function App() {
         <Route path="/admin-signup" element={<AdminSignup />} />
         <Route path="/services/:id" element={<ServiceDetails />} />
         <Route path="/location" element={<Location />} />
-<Route path="/admin-secret" element={<AdminSecret />} />
-
-
+        <Route path="/admin-secret" element={<AdminSecret />} />
       </Routes>
+
     </BrowserRouter>
   );
 }

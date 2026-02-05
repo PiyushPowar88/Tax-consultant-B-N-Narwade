@@ -9,6 +9,7 @@ export default function Dashboard() {
   const [services, setServices] = useState([]);
   const [images, setImages] = useState([]);
   const [inquiries, setInquiries] = useState([]);
+  const [deadlines, setDeadlines] = useState([]);
 
   const [activeTab, setActiveTab] = useState("services");
   const [unreadCount, setUnreadCount] = useState(0);
@@ -27,6 +28,15 @@ export default function Dashboard() {
     file: null,
     preview: null
   });
+
+   // Deadline Form
+  const [deadlineForm, setDeadlineForm] = useState({
+    category: "ITR",
+    name: "",
+    form_type: "",
+    due_date: ""
+  });
+const [editingId, setEditingId] = useState(null);
 
   const [uploading, setUploading] = useState(false);
 
@@ -62,8 +72,86 @@ export default function Dashboard() {
       loadServices();
       loadImages();
       loadInquiries();
+      loadDeadlines();
     }
   }, [token]);
+
+
+  // ================= DEADLINES =================
+
+  const loadDeadlines = () => {
+  axios
+    .get("http://localhost:5000/api/tax-deadlines")
+    .then((res) => {
+      setDeadlines(res.data);
+    })
+    .catch((err) => {
+      console.log("Load deadlines error:", err);
+    });
+};
+
+ const saveDeadline = () => {
+
+  if (!deadlineForm.name || !deadlineForm.due_date) {
+    alert("Fill all required fields");
+    return;
+  }
+
+  // EDIT
+  if (editingId) {
+
+    axios.put(
+      `http://localhost:5000/api/tax-deadlines/${editingId}`,
+      deadlineForm,
+      {
+        headers: { Authorization: token }
+      }
+    ).then(() => {
+
+      alert("Updated");
+      resetDeadline();
+
+    });
+
+  }
+
+  // ADD
+  else {
+
+    axios.post(
+      "http://localhost:5000/api/tax-deadlines",
+      deadlineForm,
+      {
+        headers: { Authorization: token }
+      }
+    ).then(() => {
+
+      alert("Saved");
+      resetDeadline();
+
+    });
+
+  }
+};
+
+
+const deleteDeadline = (id) => {
+
+  if (!window.confirm("Delete this deadline?")) return;
+
+  axios.delete(
+    `http://localhost:5000/api/tax-deadlines/${id}`,
+    {
+      headers: { Authorization: token }
+    }
+  ).then(() => {
+
+    alert("Deleted");
+
+    loadDeadlines();
+  });
+};
+
 
 
   // ================= SERVICE =================
@@ -202,7 +290,19 @@ export default function Dashboard() {
 
   };
 
+const resetDeadline = () => {
 
+  setDeadlineForm({
+    category: "ITR",
+    name: "",
+    form_type: "",
+    due_date: ""
+  });
+
+  setEditingId(null);
+
+  loadDeadlines();
+};
 
   // ================= UI =================
 
@@ -276,12 +376,153 @@ export default function Dashboard() {
             📩 Inquiries
           </button>
 
+           <button
+            onClick={() => setActiveTab("deadlines")}
+            className={`pb-3 font-semibold ${
+              activeTab === "deadlines"
+                ? "border-b-4 border-teal-500 text-teal-600"
+                : "text-gray-500"
+            }`}
+          >
+            ⏰ Deadlines
+          </button>
+
         </div>
       </div>
 
 
 
       <div className="max-w-7xl mx-auto px-6 py-10">
+
+
+          {/* ================= DEADLINES ================= */}
+        {activeTab === "deadlines" && (
+
+          <div className="bg-white p-6 rounded shadow">
+
+            <h2 className="font-bold mb-4 text-lg">
+              Manage Tax Deadlines
+            </h2>
+
+
+            {/* Form */}
+            <select
+              className="border p-2 w-full mb-2"
+              value={deadlineForm.category}
+              onChange={(e) =>
+                setDeadlineForm({
+                  ...deadlineForm,
+                  category: e.target.value
+                })
+              }
+            >
+              <option value="ITR">Income Tax</option>
+              <option value="GST">GST</option>
+            </select>
+
+
+            <input
+              className="border p-2 w-full mb-2"
+              placeholder="Name (Ex: GSTR-1, Salaried)"
+              value={deadlineForm.name}
+              onChange={(e) =>
+                setDeadlineForm({
+                  ...deadlineForm,
+                  name: e.target.value
+                })
+              }
+            />
+
+
+            <input
+              className="border p-2 w-full mb-2"
+              placeholder="Form / Type"
+              value={deadlineForm.form_type}
+              onChange={(e) =>
+                setDeadlineForm({
+                  ...deadlineForm,
+                  form_type: e.target.value
+                })
+              }
+            />
+
+
+            <input
+              type="date"
+              className="border p-2 w-full mb-3"
+              value={deadlineForm.due_date}
+              onChange={(e) =>
+                setDeadlineForm({
+                  ...deadlineForm,
+                  due_date: e.target.value
+                })
+              }
+            />
+
+
+            <button
+              onClick={saveDeadline}
+              className="bg-teal-500 text-white w-full py-2 rounded"
+            >
+              Save Deadline
+            </button>
+
+
+            {/* List */}
+            <div className="mt-6 space-y-2">
+
+             {deadlines.map(d => (
+
+  <div
+    key={d.id}
+    className="flex justify-between items-center border p-2 rounded"
+  >
+
+    <div>
+      <b>{d.name}</b> ({d.category}) — {d.due_date}
+    </div>
+
+
+    <div className="space-x-2">
+
+      {/* EDIT */}
+      <button
+        onClick={() => {
+
+          setDeadlineForm({
+            category: d.category,
+            name: d.name,
+            form_type: d.form_type,
+            due_date: d.due_date.split("T")[0]
+          });
+
+          setEditingId(d.id);
+        }}
+        className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+      >
+        Edit
+      </button>
+
+
+      {/* DELETE */}
+      <button
+        onClick={() => deleteDeadline(d.id)}
+        className="px-3 py-1 bg-red-500 text-white rounded text-sm"
+      >
+        Delete
+      </button>
+
+    </div>
+
+  </div>
+))}
+
+            </div>
+
+          </div>
+        )}
+
+
 
 
         {/* ================= SERVICES ================= */}

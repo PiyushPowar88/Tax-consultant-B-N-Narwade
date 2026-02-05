@@ -3,35 +3,37 @@ import { useRef, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Footer from "../components/Footer";
+import TaxDeadlineTracker from "../components/TaxDeadlineTracker";
+
 import axios from "axios";
 import { Link } from "react-router-dom";
 
 // Animation variants
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" }
-  }
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
 };
 
 const fadeInLeft = {
   hidden: { opacity: 0, x: -60 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     x: 0,
-    transition: { duration: 0.6, ease: "easeOut" }
-  }
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
 };
 
 const fadeInRight = {
   hidden: { opacity: 0, x: 60 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     x: 0,
-    transition: { duration: 0.6, ease: "easeOut" }
-  }
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
 };
 
 const staggerContainer = {
@@ -40,22 +42,27 @@ const staggerContainer = {
     opacity: 1,
     transition: {
       staggerChildren: 0.2,
-      delayChildren: 0.1
-    }
-  }
+      delayChildren: 0.1,
+    },
+  },
 };
 
 const scaleIn = {
   hidden: { opacity: 0, scale: 0.9 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     scale: 1,
-    transition: { duration: 0.5, ease: "easeOut" }
-  }
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
 };
 
 // Reusable animated component
-const ScrollReveal = ({ children, variant = fadeInUp, delay = 0, className = "" }) => {
+const ScrollReveal = ({
+  children,
+  variant = fadeInUp,
+  delay = 0,
+  className = "",
+}) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
   const controls = useAnimation();
@@ -263,8 +270,11 @@ export default function Home() {
         <div className="py-20 px-6 md:px-10 bg-white">
           <div className="grid lg:grid-cols-[1.3fr_1fr] gap-20 mx-20">
             {/* Left Side - Image */}
-            <ScrollReveal variant={fadeInLeft} className="flex justify-center md:justify-start">
-              <motion.div 
+            <ScrollReveal
+              variant={fadeInLeft}
+              className="flex justify-center md:justify-start"
+            >
+              <motion.div
                 className="rounded-2xl shadow-2xl overflow-hidden w-full"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
@@ -295,7 +305,7 @@ export default function Home() {
             {/* Right Side - Text */}
             <ScrollReveal variant={fadeInRight}>
               <div className="space-y-6 text-center md:text-left">
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
@@ -304,7 +314,7 @@ export default function Home() {
                   Serving Our Valued Clients For More Than 30+ Years
                 </motion.p>
 
-                <motion.h2 
+                <motion.h2
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
@@ -313,7 +323,7 @@ export default function Home() {
                   B N Narwade & Co.
                 </motion.h2>
 
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -322,31 +332,32 @@ export default function Home() {
                   Your Trusted Partner
                 </motion.p>
 
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                   className="text-gray-700 text-xl leading-relaxed md:mx-0"
                 >
-                  We are prominent tax and financial consultants in Pune. With over
-                  two decades of expertise, we offer comprehensive services
-                  including GST filing, income tax returns, business registrations,
-                  professional accounting, compliance management, and financial
-                  consulting for individuals and businesses across India.
+                  We are prominent tax and financial consultants in Pune. With
+                  over two decades of expertise, we offer comprehensive services
+                  including GST filing, income tax returns, business
+                  registrations, professional accounting, compliance management,
+                  and financial consulting for individuals and businesses across
+                  India.
                 </motion.p>
 
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                   className="text-gray-600 text-lg leading-relaxed md:mx-0"
                 >
-                  Our commitment is to deliver precision, compliance, and growth for
-                  every client. We handle your financial compliance with expertise
-                  while you focus on your business growth.
+                  Our commitment is to deliver precision, compliance, and growth
+                  for every client. We handle your financial compliance with
+                  expertise while you focus on your business growth.
                 </motion.p>
 
-                <motion.button 
+                <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
@@ -363,7 +374,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* Services Carousel Section */}
-            {/* Services Carousel Section - Fixed */}
+      {/* Services Carousel Section - Fixed */}
       <ScrollReveal>
         <div className="py-20 px-6 md:px-12 bg-gray-100">
           <div className="max-w-6xl mx-auto">
@@ -376,10 +387,10 @@ export default function Home() {
                   Solutions Tailored to Your Needs, Service Perfected
                 </h2>
                 <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-                  We provide real-world solutions to complex business issues through
-                  audit and assurance functions, taxation—international and
-                  domestic, startup in India, company formation in India and foreign
-                  investment in India etc.
+                  We provide real-world solutions to complex business issues
+                  through audit and assurance functions, taxation—international
+                  and domestic, startup in India, company formation in India and
+                  foreign investment in India etc.
                 </p>
               </div>
             </ScrollReveal>
@@ -416,7 +427,7 @@ export default function Home() {
                 </div>
 
                 {/* Navigation Buttons */}
-                <motion.div 
+                <motion.div
                   className="flex justify-center items-center gap-6 mt-12"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -464,13 +475,38 @@ export default function Home() {
         </div>
       </ScrollReveal>
 
+      <ScrollReveal>
+        <div className="py-16 px-6 bg-gray-50">
+          <div className="mx-auto mx-8 grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-10 items-stretch">
+            {/* <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_1.5fr] gap-10 items-stretch"> */}
+            {/* LEFT : VIDEO */}
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-300 bg-black  h-[600px] md:h-[650px] lg:h-[1000px]">
+              <video
+                src="/videos/tax.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+className="w-full h-full object-cover object-[70%_70%]"
+              />
+            </div>
+
+            {/* RIGHT : TAX TRACKER */}
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 h-full min-h-[700px] overflow-hidden">
+              <TaxDeadlineTracker />
+            </div>
+          </div>
+        </div>
+      </ScrollReveal>
+
       {/* Comprehensive Services Section */}
       <ScrollReveal>
         <div className="py-20 px-6 md:px-12 bg-gradient-to-b from-white to-gray-50">
           <div className="max-w-6xl mx-auto">
             <ScrollReveal>
               <div className="mb-16 text-center">
-                <motion.div 
+                <motion.div
                   className="w-16 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 mb-6 mx-auto"
                   initial={{ width: 0 }}
                   whileInView={{ width: "4rem" }}
@@ -482,12 +518,13 @@ export default function Home() {
                 </h2>
                 <p className="text-gray-600 text-lg max-w-3xl mx-auto">
                   From GST and income tax filing to business registrations and
-                  specialized services, we provide end-to-end financial solutions.
+                  specialized services, we provide end-to-end financial
+                  solutions.
                 </p>
               </div>
             </ScrollReveal>
 
-            <motion.div 
+            <motion.div
               className="grid md:grid-cols-2 gap-8"
               variants={staggerContainer}
               initial="hidden"
@@ -510,8 +547,8 @@ export default function Home() {
                   </h3>
                   <ul className="space-y-3">
                     {service.items.map((item, i) => (
-                      <motion.li 
-                        key={i} 
+                      <motion.li
+                        key={i}
                         className="text-gray-700 flex items-start"
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -540,7 +577,7 @@ export default function Home() {
           <div className="max-w-6xl mx-auto">
             <ScrollReveal>
               <div className="text-center mb-16">
-                <motion.div 
+                <motion.div
                   className="w-16 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 mb-6 mx-auto"
                   initial={{ width: 0 }}
                   whileInView={{ width: "4rem" }}
@@ -551,8 +588,8 @@ export default function Home() {
                   Why Choose B N Narwade & Co.?
                 </h2>
                 <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-                  With years of expertise in tax consulting and financial services,
-                  we deliver exceptional solutions.
+                  With years of expertise in tax consulting and financial
+                  services, we deliver exceptional solutions.
                 </p>
               </div>
             </ScrollReveal>
@@ -572,7 +609,7 @@ export default function Home() {
                       className={`${item.bgColor} border-l-4 border-gray-300 p-6 rounded-lg hover:shadow-lg transition`}
                     >
                       <div className="flex gap-4">
-                        <motion.div 
+                        <motion.div
                           className="text-4xl"
                           whileHover={{ rotate: 10, scale: 1.1 }}
                           transition={{ type: "spring", stiffness: 300 }}
@@ -585,7 +622,9 @@ export default function Home() {
                           >
                             {item.title}
                           </h3>
-                          <p className="text-gray-600 text-sm mt-2">{item.desc}</p>
+                          <p className="text-gray-600 text-sm mt-2">
+                            {item.desc}
+                          </p>
                         </div>
                       </div>
                     </motion.div>
@@ -595,7 +634,7 @@ export default function Home() {
 
               {/* Right Side - Highlights Box */}
               <ScrollReveal variant={fadeInRight}>
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
@@ -604,13 +643,27 @@ export default function Home() {
                   className="bg-gradient-to-br from-teal-500 to-cyan-500 rounded-2xl p-10 text-white shadow-2xl"
                 >
                   <h3 className="text-3xl font-bold mb-2">Precision</h3>
-                  <p className="text-teal-50 mb-8 text-lg">Compliance & Growth</p>
+                  <p className="text-teal-50 mb-8 text-lg">
+                    Compliance & Growth
+                  </p>
 
                   <div className="space-y-6 mb-8">
                     {[
-                      { icon: "✓", title: "100% Accuracy Guaranteed", desc: "Precise calculations every time" },
-                      { icon: "⏰", title: "24/7 Availability", desc: "Always here when you need us" },
-                      { icon: "🎯", title: "Expert Support", desc: "Professional guidance throughout" }
+                      {
+                        icon: "✓",
+                        title: "100% Accuracy Guaranteed",
+                        desc: "Precise calculations every time",
+                      },
+                      {
+                        icon: "⏰",
+                        title: "24/7 Availability",
+                        desc: "Always here when you need us",
+                      },
+                      {
+                        icon: "🎯",
+                        title: "Expert Support",
+                        desc: "Professional guidance throughout",
+                      },
                     ].map((item, idx) => (
                       <motion.div
                         key={idx}
@@ -624,7 +677,9 @@ export default function Home() {
                         <span className="text-3xl">{item.icon}</span>
                         <div>
                           <h4 className="font-bold text-lg">{item.title}</h4>
-                          <p className="text-teal-50 text-sm mt-1">{item.desc}</p>
+                          <p className="text-teal-50 text-sm mt-1">
+                            {item.desc}
+                          </p>
                         </div>
                       </motion.div>
                     ))}
@@ -649,7 +704,7 @@ export default function Home() {
       </ScrollReveal>
 
       {/* Clients Logos Section */}
-      <ScrollReveal>
+      {/* <ScrollReveal>
         <div className="py-20 px-6 md:px-12 bg-white">
           <div className="max-w-7xl mx-auto">
             <ScrollReveal>
@@ -706,20 +761,20 @@ export default function Home() {
             </ScrollReveal>
           </div>
         </div>
-      </ScrollReveal>
+      </ScrollReveal> */}
 
       {/* Get in Touch Section */}
       <ScrollReveal>
         <div className="py-20 px-6 md:px-12 bg-gradient-to-r from-gray-50 to-gray-100">
           <div className="max-w-3xl mx-auto text-center">
-            <motion.div 
+            <motion.div
               className="w-16 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 mb-8 mx-auto"
               initial={{ width: 0 }}
               whileInView={{ width: "4rem" }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             />
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -728,17 +783,17 @@ export default function Home() {
             >
               Get in Touch
             </motion.h2>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
               className="text-gray-600 text-lg mb-10"
             >
-              Ready to simplify your financial compliance? Get in touch for a free
-              consultation.
+              Ready to simplify your financial compliance? Get in touch for a
+              free consultation.
             </motion.p>
-            <motion.div 
+            <motion.div
               className="flex flex-col md:flex-row gap-4 justify-center"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -756,13 +811,13 @@ export default function Home() {
                   Contact Us Today
                 </Link>
               </motion.div>
-              <motion.button 
+              {/* <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="border-2 border-teal-500 text-teal-600 hover:bg-teal-50 font-bold px-10 py-4 rounded-xl transition duration-200"
               >
                 Learn More
-              </motion.button>
+              </motion.button> */}
             </motion.div>
           </div>
         </div>
