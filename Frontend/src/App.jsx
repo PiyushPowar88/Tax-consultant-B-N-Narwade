@@ -10,6 +10,10 @@ import AdminSignup from "./pages/AdminSignup";
 import ServiceDetails from "./pages/ServiceDetails";
 import Location from "./pages/Location";
 import AdminSecret from "./pages/AdminSecret";
+import AboutFirm from "./pages/AboutFirm";
+import ScrollToTop from "./components/ScrollToTop";
+
+
 
 /* ===== Scroll + Width Fix Component ===== */
 function ScrollFix() {
@@ -28,9 +32,11 @@ function ScrollFix() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       
       {/* Fix layout shrink on route change */}
       <ScrollFix />
+
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -42,6 +48,9 @@ export default function App() {
         <Route path="/services/:id" element={<ServiceDetails />} />
         <Route path="/location" element={<Location />} />
         <Route path="/admin-secret" element={<AdminSecret />} />
+        <Route path="/about-firm" element={<AboutFirm />} />
+
+
       </Routes>
 
     </BrowserRouter>

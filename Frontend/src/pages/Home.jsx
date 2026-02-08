@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import TaxDeadlineTracker from "../components/TaxDeadlineTracker";
 
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // Animation variants
 const fadeInUp = {
@@ -91,6 +91,9 @@ export default function Home() {
   const [ownerImageId, setOwnerImageId] = useState(null);
   const [loadingImage, setLoadingImage] = useState(true);
   const [clientsLogos, setClientsLogos] = useState([]);
+
+  const navigate = useNavigate(); // 👈 add here
+
   const services = [
     {
       icon: "📋",
@@ -171,38 +174,39 @@ export default function Home() {
   ];
 
   // Services Carousel
-  const serviceCards = [
-    {
-      id: 1,
-      title: "Foreign Investment Approvals",
-      image:
-        "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=400&fit=crop",
-    },
-    {
-      id: 2,
-      title: "Auditing",
-      image:
-        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=400&fit=crop",
-    },
-    {
-      id: 3,
-      title: "Litigation",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=400&fit=crop",
-    },
-    {
-      id: 4,
-      title: "Tax Consulting",
-      image:
-        "https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=500&h=400&fit=crop",
-    },
-    {
-      id: 5,
-      title: "Financial Planning",
-      image:
-        "https://images.unsplash.com/photo-1553729717-e91a2f023c1d?w=500&h=400&fit=crop",
-    },
-  ];
+  // const serviceCards = [
+  //   {
+  //     id: 1,
+  //     title: "Foreign Investment Approvals",
+  //     image:
+  //       "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=400&fit=crop",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Auditing",
+  //     image:
+  //       "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=400&fit=crop",
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "Litigation",
+  //     image:
+  //       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=400&fit=crop",
+  //   },
+  //   {
+  //     id: 4,
+  //     title: "Tax Consulting",
+  //     image:
+  //       "https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=500&h=400&fit=crop",
+  //   },
+  //   {
+  //     id: 5,
+  //     title: "Financial Planning",
+  //     image:
+  //       "https://images.unsplash.com/photo-1553729717-e91a2f023c1d?w=500&h=400&fit=crop",
+  //   },
+  // ];
+  const [serviceCards, setServiceCards] = useState([]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -231,13 +235,24 @@ export default function Home() {
       .catch((err) =>
         console.log("Could not load clients logos:", err.message),
       );
+
+    // Fetch services for carousel
+    axios
+      .get("http://localhost:5000/api/services")
+      .then((res) => setServiceCards(res.data))
+      .catch((err) => console.log("Services error:", err.message));
   }, []);
 
   // Auto-scroll effect
+  // Auto-scroll effect (Safe)
   useEffect(() => {
+    // Don't start until data is loaded
+    if (serviceCards.length === 0) return;
+
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % serviceCards.length);
-    }, 5000); // Change slide every 5 seconds
+    }, 2000);
+
     return () => clearInterval(interval);
   }, [serviceCards.length]);
 
@@ -253,6 +268,8 @@ export default function Home() {
 
   // Get visible cards (show 3 cards at a time)
   const getVisibleCards = () => {
+    if (serviceCards.length < 3) return serviceCards;
+
     return [
       serviceCards[currentIndex % serviceCards.length],
       serviceCards[(currentIndex + 1) % serviceCards.length],
@@ -357,16 +374,18 @@ export default function Home() {
                   expertise while you focus on your business growth.
                 </motion.p>
 
-                <motion.button
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-semibold text-lg px-10 py-5 rounded-xl shadow-lg transition"
-                >
-                  Explore More About Us
-                </motion.button>
+                <Link to="/about-firm">
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-semibold text-lg px-10 py-5 rounded-xl shadow-lg transition"
+                  >
+                    Explore More About Us
+                  </motion.button>
+                </Link>
               </div>
             </ScrollReveal>
           </div>
@@ -403,15 +422,16 @@ export default function Home() {
                   {getVisibleCards().map((card, index) => (
                     <motion.div
                       key={card.id}
+                      onClick={() => navigate(`/services/${card.id}`)}
                       initial={{ opacity: 0, y: 40 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                       viewport={{ once: true, amount: 0.3 }}
-                      className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 h-80"
+                      className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 h-80 cursor-pointer"
                       whileHover={{ y: -10 }}
                     >
                       <motion.img
-                        src={card.image}
+                        src={`http://localhost:5000/api/admin/services/${card.id}/image`}
                         alt={card.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         whileHover={{ scale: 1.1 }}
@@ -482,13 +502,13 @@ export default function Home() {
             {/* LEFT : VIDEO */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-gray-300 bg-black  h-[600px] md:h-[650px] lg:h-[1000px]">
               <video
-                src="/videos/tax.mp4"
+                src="/videos/Tax1.mp4"
                 autoPlay
                 muted
                 loop
                 playsInline
                 preload="auto"
-className="w-full h-full object-cover object-[70%_70%]"
+                className="w-full h-full object-cover object-[70%_70%]"
               />
             </div>
 
