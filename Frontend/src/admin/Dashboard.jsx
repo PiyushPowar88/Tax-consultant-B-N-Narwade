@@ -30,12 +30,16 @@ export default function Dashboard() {
   });
 
    // Deadline Form
-  const [deadlineForm, setDeadlineForm] = useState({
-    category: "ITR",
-    name: "",
-    form_type: "",
-    due_date: ""
-  });
+ const [deadlineForm, setDeadlineForm] = useState({
+ category: "ITR",
+  name: "",
+  form_type: "",
+  frequency: "yearly",
+  rule_day: "",
+  rule_month: "",
+  is_auto: true,
+  manual_due_date: ""
+});
 const [editingId, setEditingId] = useState(null);
 
   const [uploading, setUploading] = useState(false);
@@ -90,19 +94,53 @@ const [editingId, setEditingId] = useState(null);
     });
 };
 
- const saveDeadline = () => {
+const saveDeadline = () => {
 
-  if (!deadlineForm.name || !deadlineForm.due_date) {
-    alert("Fill all required fields");
+  // ===== VALIDATION =====
+
+  if (!deadlineForm.name || !deadlineForm.rule_day) {
+    alert("Please fill required fields");
     return;
   }
 
-  // EDIT
+  // If yearly, rule_month required
+  if (
+    deadlineForm.frequency === "yearly" &&
+    !deadlineForm.rule_month
+  ) {
+    alert("Please enter rule month");
+    return;
+  }
+
+  // If Auto OFF, manual date required
+  if (
+    !deadlineForm.is_auto &&
+    !deadlineForm.manual_due_date
+  ) {
+    alert("Please select manual due date");
+    return;
+  }
+
+  // ===== PREPARE PAYLOAD =====
+
+  const payload = {
+    ...deadlineForm,
+    rule_day: Number(deadlineForm.rule_day),
+    rule_month:
+      deadlineForm.frequency === "yearly"
+        ? Number(deadlineForm.rule_month)
+        : null,
+    manual_due_date: deadlineForm.is_auto
+      ? null
+      : deadlineForm.manual_due_date
+  };
+
+  // ===== EDIT =====
   if (editingId) {
 
     axios.put(
       `http://localhost:5000/api/tax-deadlines/${editingId}`,
-      deadlineForm,
+      payload,
       {
         headers: { Authorization: token }
       }
@@ -111,16 +149,20 @@ const [editingId, setEditingId] = useState(null);
       alert("Updated");
       resetDeadline();
 
+    }).catch(err => {
+      console.log(err);
+      alert("Error updating");
     });
 
   }
 
-  // ADD
+  // ===== ADD =====
   else {
+console.log("Sending Payload:", payload);
 
     axios.post(
       "http://localhost:5000/api/tax-deadlines",
-      deadlineForm,
+      payload,
       {
         headers: { Authorization: token }
       }
@@ -129,10 +171,14 @@ const [editingId, setEditingId] = useState(null);
       alert("Saved");
       resetDeadline();
 
+    }).catch(err => {
+      console.log(err);
+      alert("Error saving");
     });
 
   }
 };
+
 
 
 const deleteDeadline = (id) => {
@@ -293,14 +339,17 @@ const deleteDeadline = (id) => {
 const resetDeadline = () => {
 
   setDeadlineForm({
-    category: "ITR",
+    category: "ITR",   // 👈 important
     name: "",
     form_type: "",
-    due_date: ""
+    frequency: "yearly",
+    rule_day: "",
+    rule_month: "",
+    is_auto: true,
+    manual_due_date: ""
   });
 
   setEditingId(null);
-
   loadDeadlines();
 };
 
@@ -396,131 +445,185 @@ const resetDeadline = () => {
 
 
           {/* ================= DEADLINES ================= */}
-        {activeTab === "deadlines" && (
+       {activeTab === "deadlines" && (
 
-          <div className="bg-white p-6 rounded shadow">
+  <div className="bg-white p-6 rounded shadow">
 
-            <h2 className="font-bold mb-4 text-lg">
-              Manage Tax Deadlines
-            </h2>
+    <h2 className="font-bold mb-4 text-lg">
+      Manage Tax Deadlines
+    </h2>
 
+    {/* CATEGORY */}
+    <select
+      className="border p-2 w-full mb-2"
+      value={deadlineForm.category}
+      onChange={(e) =>
+        setDeadlineForm({
+          ...deadlineForm,
+          category: e.target.value
+        })
+      }
+    >
+      <option value="ITR">Income Tax</option>
+      <option value="GST">GST</option>
+    </select>
 
-            {/* Form */}
-            <select
-              className="border p-2 w-full mb-2"
-              value={deadlineForm.category}
-              onChange={(e) =>
-                setDeadlineForm({
-                  ...deadlineForm,
-                  category: e.target.value
-                })
-              }
-            >
-              <option value="ITR">Income Tax</option>
-              <option value="GST">GST</option>
-            </select>
+    {/* NAME */}
+    <input
+      className="border p-2 w-full mb-2"
+      placeholder="Name (Ex: GSTR-1, Salaried)"
+      value={deadlineForm.name}
+      onChange={(e) =>
+        setDeadlineForm({
+          ...deadlineForm,
+          name: e.target.value
+        })
+      }
+    />
 
+    {/* FORM TYPE */}
+    <input
+      className="border p-2 w-full mb-2"
+      placeholder="Form / Type"
+      value={deadlineForm.form_type}
+      onChange={(e) =>
+        setDeadlineForm({
+          ...deadlineForm,
+          form_type: e.target.value
+        })
+      }
+    />
 
-            <input
-              className="border p-2 w-full mb-2"
-              placeholder="Name (Ex: GSTR-1, Salaried)"
-              value={deadlineForm.name}
-              onChange={(e) =>
-                setDeadlineForm({
-                  ...deadlineForm,
-                  name: e.target.value
-                })
-              }
-            />
+    {/* FREQUENCY */}
+    <select
+      className="border p-2 w-full mb-2"
+      value={deadlineForm.frequency}
+      onChange={(e) =>
+        setDeadlineForm({
+          ...deadlineForm,
+          frequency: e.target.value
+        })
+      }
+    >
+      <option value="yearly">Yearly</option>
+      <option value="monthly">Monthly</option>
+    </select>
 
+    {/* RULE DAY */}
+    <input
+      type="number"
+      className="border p-2 w-full mb-2"
+      placeholder="Rule Day (Example: 31 or 20)"
+      value={deadlineForm.rule_day}
+      onChange={(e) =>
+        setDeadlineForm({
+          ...deadlineForm,
+          rule_day: e.target.value
+        })
+      }
+    />
 
-            <input
-              className="border p-2 w-full mb-2"
-              placeholder="Form / Type"
-              value={deadlineForm.form_type}
-              onChange={(e) =>
-                setDeadlineForm({
-                  ...deadlineForm,
-                  form_type: e.target.value
-                })
-              }
-            />
+    {/* RULE MONTH (ONLY IF YEARLY) */}
+    {deadlineForm.frequency === "yearly" && (
+      <input
+        type="number"
+        className="border p-2 w-full mb-2"
+        placeholder="Rule Month (1-12)"
+        value={deadlineForm.rule_month}
+        onChange={(e) =>
+          setDeadlineForm({
+            ...deadlineForm,
+            rule_month: e.target.value
+          })
+        }
+      />
+    )}
 
+    {/* AUTO TOGGLE */}
+    <label className="flex items-center gap-2 mb-2">
+      <input
+        type="checkbox"
+        checked={deadlineForm.is_auto}
+        onChange={(e) =>
+          setDeadlineForm({
+            ...deadlineForm,
+            is_auto: e.target.checked
+          })
+        }
+      />
+      Auto Mode
+    </label>
 
-            <input
-              type="date"
-              className="border p-2 w-full mb-3"
-              value={deadlineForm.due_date}
-              onChange={(e) =>
-                setDeadlineForm({
-                  ...deadlineForm,
-                  due_date: e.target.value
-                })
-              }
-            />
+    {/* MANUAL DATE (ONLY IF AUTO OFF) */}
+    {!deadlineForm.is_auto && (
+      <input
+        type="date"
+        className="border p-2 w-full mb-3"
+        value={deadlineForm.manual_due_date}
+        onChange={(e) =>
+          setDeadlineForm({
+            ...deadlineForm,
+            manual_due_date: e.target.value
+          })
+        }
+      />
+    )}
 
+    <button
+      onClick={saveDeadline}
+      className="bg-teal-500 text-white w-full py-2 rounded"
+    >
+      Save Deadline
+    </button>
+
+    {/* LIST */}
+    <div className="mt-6 space-y-2">
+      {deadlines.map(d => (
+        <div
+          key={d.id}
+          className="flex justify-between items-center border p-2 rounded"
+        >
+          <div>
+            <b>{d.name}</b> ({d.category}) — {d.due_date}
+          </div>
+
+          <div className="space-x-2">
 
             <button
-              onClick={saveDeadline}
-              className="bg-teal-500 text-white w-full py-2 rounded"
+              onClick={() => {
+                setDeadlineForm({
+                  category: d.category,
+                  name: d.name,
+                  form_type: d.form_type,
+                  frequency: d.frequency,
+                  rule_day: d.rule_day,
+                  rule_month: d.rule_month,
+                  is_auto: d.is_auto,
+                  manual_due_date: d.manual_due_date
+                    ? d.manual_due_date.split("T")[0]
+                    : ""
+                });
+                setEditingId(d.id);
+              }}
+              className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
             >
-              Save Deadline
+              Edit
             </button>
 
+            <button
+              onClick={() => deleteDeadline(d.id)}
+              className="px-3 py-1 bg-red-500 text-white rounded text-sm"
+            >
+              Delete
+            </button>
 
-            {/* List */}
-            <div className="mt-6 space-y-2">
-
-             {deadlines.map(d => (
-
-  <div
-    key={d.id}
-    className="flex justify-between items-center border p-2 rounded"
-  >
-
-    <div>
-      <b>{d.name}</b> ({d.category}) — {d.due_date}
-    </div>
-
-
-    <div className="space-x-2">
-
-      {/* EDIT */}
-      <button
-        onClick={() => {
-
-          setDeadlineForm({
-            category: d.category,
-            name: d.name,
-            form_type: d.form_type,
-            due_date: d.due_date.split("T")[0]
-          });
-
-          setEditingId(d.id);
-        }}
-        className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
-      >
-        Edit
-      </button>
-
-
-      {/* DELETE */}
-      <button
-        onClick={() => deleteDeadline(d.id)}
-        className="px-3 py-1 bg-red-500 text-white rounded text-sm"
-      >
-        Delete
-      </button>
-
+          </div>
+        </div>
+      ))}
     </div>
 
   </div>
-))}
-
-            </div>
-
-          </div>
-        )}
+)}
 
 
 
