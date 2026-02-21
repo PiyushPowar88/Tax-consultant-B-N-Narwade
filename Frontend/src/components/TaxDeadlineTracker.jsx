@@ -130,29 +130,31 @@ export default function TaxDeadlineTracker() {
 
   /* ================= UI ================= */
 
-  return (
-    <div className="py-8 mt-2 px-6 bg-white">
+ /* ================= UI ================= */
 
-      <div className="max-w-7xl mx-auto">
+return (
+  <div className="py-8 mt-2 px-4 sm:px-6 bg-white">
 
-        {/* Title */}
-        <h2 className="text-5xl font-bold text-center mb-12">
-          Tax Due Date Tracker
-        </h2>
+    <div className="max-w-full mx-auto">
+
+      {/* Title */}
+      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-8 lg:mb-12">
+        Tax Due Date Tracker
+      </h2>
 
 
-     {/* ================= Two Columns ================= */}
+   {/* ================= Two Columns ================= */}
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
 
   {/* ========== INCOME TAX ========== */}
-  <div className="bg-white rounded-xl shadow border p-4">
+  <div className="bg-white rounded-xl shadow border p-4 sm:p-6">
 
-    <h3 className="text-2xl font-bold mb-4 text-blue-700 text-center border-b pb-2">
+    <h3 className="text-xl sm:text-2xl font-bold mb-4 text-blue-700 text-center border-b pb-2">
       📄 Income Tax
     </h3>
 
-<div className="grid grid-cols-1 gap-4">
+<div className="space-y-4">
       {itrData.length > 0 ? (
         itrData.map(renderCard)
       ) : (
@@ -166,13 +168,13 @@ export default function TaxDeadlineTracker() {
 
 
   {/* ========== GST ========== */}
-  <div className="bg-white rounded-xl shadow border p-4">
+  <div className="bg-white rounded-xl shadow border p-4 sm:p-6">
 
-    <h3 className="text-2xl font-bold mb-4 text-green-700 text-center border-b pb-2">
+    <h3 className="text-xl sm:text-2xl font-bold mb-4 text-green-700 text-center border-b pb-2">
       🧾 GST
     </h3>
 
-<div className="grid grid-cols-1 gap-4">
+<div className="space-y-4">
       {gstData.length > 0 ? (
         gstData.map(renderCard)
       ) : (
@@ -186,8 +188,8 @@ export default function TaxDeadlineTracker() {
 
 </div>
 
-      </div>
-
     </div>
-  );
+
+  </div>
+);
 }
