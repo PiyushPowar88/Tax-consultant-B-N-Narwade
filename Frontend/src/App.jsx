@@ -12,6 +12,7 @@ import Location from "./pages/Location";
 import AdminSecret from "./pages/AdminSecret";
 import AboutFirm from "./pages/AboutFirm";
 import ScrollToTop from "./components/ScrollToTop";
+import RegistrationPage from "./pages/RegistrationPage";
 
 
 
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/location" element={<Location />} />
         <Route path="/admin-secret" element={<AdminSecret />} />
         <Route path="/about-firm" element={<AboutFirm />} />
+<Route path="/registration" element={<RegistrationPage />} />
 
 
       </Routes>

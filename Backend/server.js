@@ -10,6 +10,10 @@ import serviceRoutes from "./routes/serviceRoutes.js";
 import inquiryRoutes from "./routes/inquiryRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import taxDeadlineRoutes from "./routes/taxDeadlineRoutes.js";
+import registrationRoutes from "./routes/registrationRoutes.js";
+import exportRoutes from "./routes/exportRoutes.js";
+import upload from "./middleware/uploadMiddleware.js";
+
 
 
 dotenv.config();
@@ -26,7 +30,9 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/admin", adminServiceRoutes);
 app.use("/api/images", imageRoutes);
 app.use("/api/tax-deadlines", taxDeadlineRoutes);
-
+app.use("/api/registration", registrationRoutes);
+app.use("/api/export", exportRoutes);
+app.use("/uploads", express.static("uploads"));
 
 app.listen(5000, () => {
   console.log("Server running on port 5000");

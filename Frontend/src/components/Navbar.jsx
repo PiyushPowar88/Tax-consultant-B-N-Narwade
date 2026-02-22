@@ -55,6 +55,14 @@ export default function Navbar() {
 >
   Location 
 </Link>
+
+<Link
+  to="/registration"
+  className="text-gray-700 hover:text-blue-600 font-medium transition flex items-center gap-1"
+>
+  Registration
+</Link>
+
 <a
   href="https://www.incometax.gov.in/iec/foportal/"
   target="_blank"
@@ -133,6 +141,12 @@ export default function Navbar() {
   Location
 </Link>
 
+<Link
+  to="/registration"
+  className="block text-gray-700 hover:text-blue-600 font-medium transition"
+>
+  Registration
+</Link>
 
 
 {/* Income Tax */}

@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [deadlines, setDeadlines] = useState([]);
 
   const [activeTab, setActiveTab] = useState("services");
+  const [registrationType, setRegistrationType] = useState("income-tax");
   const [unreadCount, setUnreadCount] = useState(0);
 
   const [form, setForm] = useState({
@@ -435,7 +436,16 @@ const resetDeadline = () => {
           >
             ⏰ Deadlines
           </button>
-
+<button
+  onClick={() => setActiveTab("registrations")}
+  className={`pb-3 font-semibold ${
+    activeTab === "registrations"
+      ? "border-b-4 border-teal-500 text-teal-600"
+      : "text-gray-500"
+  }`}
+>
+   Registrations
+</button>
         </div>
       </div>
 
@@ -830,7 +840,56 @@ const resetDeadline = () => {
           </>
         )}
 
+{/* ================= REGISTRATIONS EXPORT ================= */}
+{activeTab === "registrations" && (
 
+  <div className="bg-white p-8 rounded shadow">
+
+    <h2 className="font-bold text-lg mb-6">
+      Download Registration Reports
+    </h2>
+
+    <div className="grid md:grid-cols-2 gap-6">
+
+      <div>
+
+        <label className="block mb-2 font-semibold">
+          Select Registration Type
+        </label>
+
+        <select
+          value={registrationType}
+          onChange={(e) => setRegistrationType(e.target.value)}
+          className="w-full border p-3 rounded mb-4"
+        >
+          <option value="income-tax">Income Tax</option>
+          <option value="gst">GST</option>
+          <option value="udyam">Udyam</option>
+        </select>
+
+        <button
+          onClick={() =>
+            window.open(
+              `http://localhost:5000/api/export/${registrationType}`,
+              "_blank"
+            )
+          }
+          className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded font-semibold transition"
+        >
+          Download Excel
+        </button>
+
+      </div>
+
+      <div className="flex items-center justify-center text-gray-400">
+        Latest submissions appear on top automatically.
+      </div>
+
+    </div>
+
+  </div>
+
+)}
 
         {/* ================= INQUIRIES ================= */}
         {activeTab === "inquiries" && (
