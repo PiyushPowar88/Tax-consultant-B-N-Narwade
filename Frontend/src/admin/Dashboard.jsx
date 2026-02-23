@@ -1,8 +1,11 @@
+
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Dashboard() {
-
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   // ================= STATES =================
@@ -45,6 +48,14 @@ const [editingId, setEditingId] = useState(null);
 
   const [uploading, setUploading] = useState(false);
 
+
+
+  // Redirect to login if no token
+  useEffect(() => {
+    if (!token) {
+      navigate("/admin");
+    }
+  }, [token, navigate]);
 
   // ================= LOAD DATA =================
 

@@ -9,7 +9,7 @@ export default function AdminSecret() {
   const navigate = useNavigate();
 
   // Hardcoded password (Change this!)
-  const ADMIN_SECRET = "12345";
+  const ADMIN_SECRET = "123456789";
 
 
   const verifySecret = () => {

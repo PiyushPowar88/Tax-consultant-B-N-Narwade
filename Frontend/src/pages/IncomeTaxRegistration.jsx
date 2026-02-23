@@ -315,7 +315,7 @@ const IncomeTaxRegistration = () => {
             disabled={isSubmitting}
             className="w-full sm:w-auto px-8 py-4 rounded-lg font-semibold text-white text-lg bg-gradient-to-r from-emerald-600 to-emerald-700"
           >
-            {isSubmitting ? "Processing..." : "Submit Income Tax Return"}
+            {isSubmitting ? "Processing..." : "Submit Income Tax Information"}
           </button>
 
         </form>
