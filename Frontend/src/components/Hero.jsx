@@ -531,7 +531,7 @@ export default function Hero() {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-green-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <span className="relative font-medium text-white">
-                Get Free Consultation
+                Get Consultation
               </span>
               <ArrowRight className="relative w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>

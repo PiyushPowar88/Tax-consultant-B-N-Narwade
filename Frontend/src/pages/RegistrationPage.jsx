@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import IncomeTaxRegistration from "./IncomeTaxRegistration";
 import GSTRegistration from "./GSTRegistration";
 import UdyamRegistration from "./UdyamRegistration";
+import { useNavigate } from "react-router-dom";
 
 const RegistrationPage = () => {
+  const navigate = useNavigate();
   const [serviceType, setServiceType] = useState("income_tax");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -66,6 +68,7 @@ const RegistrationPage = () => {
               </div>
               <span className="text-xl font-bold text-white hidden sm:block">Registration Portal</span>
             </div>
+
 
             {/* Desktop Service Selector */}
             <div className="hidden md:flex items-center space-x-1 bg-black/20 rounded-lg p-1">
@@ -134,7 +137,31 @@ const RegistrationPage = () => {
           </div>
         </div>
       </nav>
-
+<div className="pt-6 pl-6">
+  <button
+    onClick={() => navigate("/")}
+    className="
+      group
+      inline-flex
+      items-center
+      gap-2
+      bg-white/10
+      backdrop-blur-md
+      border border-white/20
+      text-white
+      px-5 py-2.5
+      rounded-full
+      hover:bg-white/20
+      transition-all duration-300
+      text-sm font-medium
+    "
+  >
+    <span className="group-hover:-translate-x-1 transition duration-300">
+      ←
+    </span>
+    Back to Home
+  </button>
+</div>
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">

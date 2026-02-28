@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import { useState } from "react";
 import axios from "axios";
+// import BackButton from "../components/BackButton";
 
 export default function Contact() {
   const [form, setForm] = useState({
@@ -52,6 +53,36 @@ export default function Contact() {
   return (
     <>
       <Navbar />
+{/* <BackButton /> */}
+
+{/* Premium Back Button Section */}
+<div className="bg-slate-900 pt-6 pl-6">
+
+  <button
+    onClick={() => navigate("/")}
+    className="
+      group
+      flex items-center gap-3
+      bg-gradient-to-r from-cyan-500 to-teal-500
+      text-white
+      px-6 py-3
+      rounded-full
+      shadow-lg
+      hover:shadow-cyan-500/40
+      hover:scale-105
+      transition-all duration-300
+      font-semibold
+      tracking-wide
+    "
+  >
+    <span className="transform group-hover:-translate-x-1 transition duration-300">
+      ←
+    </span>
+
+    <span>Back to Home</span>
+  </button>
+
+</div>
 
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-16 px-4">
         <div className="max-w-2xl mx-auto">

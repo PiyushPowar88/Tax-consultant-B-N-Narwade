@@ -34,11 +34,8 @@ export default function Footer() {
     <footer className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white">
 
       {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
-
-
+<div className="max-w-screen-xl mx-auto px-6 py-16">
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 items-start">
           {/* Company Info */}
           <div className="space-y-5">
 
@@ -154,7 +151,7 @@ export default function Footer() {
 
               <li className="flex gap-3">
                 <FaEnvelope />
-                narwadebn.gst@gmail.com
+                bnnarwadeandco@gmail.com
               </li>
 
               <li className="flex gap-3">
@@ -199,6 +196,16 @@ export default function Footer() {
 
           </div>
 
+   {/* Office Timings */}
+<div className="mt-8">
+  <h4 className="text-lg font-semibold mb-3">
+    Office Timings
+  </h4>
+  <ul className="space-y-2 text-teal-50 text-sm">
+    <li>Monday - Saturday: 10:30 AM - 7:00 PM</li>
+    <li>Sunday: Closed</li>
+  </ul>
+</div>
         </div>
 
       </div>

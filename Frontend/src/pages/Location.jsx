@@ -1,9 +1,36 @@
 import Navbar from "../components/Navbar";
+// import BackButton from "../components/BackButton";
+import { useNavigate } from "react-router-dom";
 
 export default function Location() {
+  const navigate = useNavigate();
   return (
+    
     <>
       <Navbar />
+{/* <BackButton /> */}
+
+<div className="pt-6 pl-6">
+  <button
+    onClick={() => navigate("/")}
+    className="
+      inline-flex
+      items-center
+      gap-2
+      bg-gradient-to-r from-teal-500 to-cyan-500
+      text-white
+      px-7 py-3
+      rounded-full
+      shadow-md
+      hover:from-teal-600
+      hover:to-cyan-600
+      transition-all duration-300
+      font-semibold
+    "
+  >
+    ← Back to Home
+  </button>
+</div>
 
       <div className="min-h-screen bg-gray-100 py-16 px-6">
 

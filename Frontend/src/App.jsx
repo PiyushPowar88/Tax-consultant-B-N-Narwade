@@ -13,6 +13,8 @@ import AdminSecret from "./pages/AdminSecret";
 import AboutFirm from "./pages/AboutFirm";
 import ScrollToTop from "./components/ScrollToTop";
 import RegistrationPage from "./pages/RegistrationPage";
+import GalleryPage from "./pages/gallerypage"; // ✅ NEW - Gallery page component
+// import HomeGallery from "./pages/homegallery";
 
 
 
@@ -51,6 +53,8 @@ export default function App() {
         <Route path="/admin-secret" element={<AdminSecret />} />
         <Route path="/about-firm" element={<AboutFirm />} />
 <Route path="/registration" element={<RegistrationPage />} />
+<Route path="/gallery" element={<GalleryPage />} />
+{/* <Route path="/home-gallery" element={<HomeGallery />} /> */}
 
 
       </Routes>

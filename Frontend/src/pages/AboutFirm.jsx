@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const AboutFirm = () => {
+  const navigate = useNavigate();
 
   const [logoImageId, setLogoImageId] = useState(null);
 
@@ -66,7 +67,27 @@ const AboutFirm = () => {
 
       </nav>
 
-
+<div className="pt-6 pl-6">
+  <button
+    onClick={() => navigate("/")}
+    className="
+      inline-flex
+      items-center
+      gap-2
+      bg-gradient-to-r from-teal-500 to-cyan-500
+      text-white
+      px-7 py-3
+      rounded-full
+      shadow-md
+      hover:from-teal-600
+      hover:to-cyan-600
+      transition-all duration-300
+      font-semibold
+    "
+  >
+    ← Back to Home
+  </button>
+</div>
       {/* ================= Hero ================= */}
       <section className="py-24 px-6 text-center bg-gray-50">
 
@@ -125,7 +146,7 @@ const AboutFirm = () => {
         <div className="bg-gray-50 rounded-xl p-8 border">
 
           <h3 className="text-xl font-semibold mb-4 text-green-600">
-            The Narwade Advantage
+            Why Choose us ?
           </h3>
 
           <ul className="space-y-3 text-gray-700">
@@ -206,7 +227,7 @@ const AboutFirm = () => {
               </h3>
 
               <p className="text-gray-600 text-sm">
-                Compelete compliance calendar, timely filings,
+                Complete compliance calendar, timely filings,
                 and proactive reminders.
               </p>
 
