@@ -57,6 +57,7 @@ import taxDeadlineRoutes from "./routes/taxDeadlineRoutes.js";
 import registrationRoutes from "./routes/registrationRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import galleryRoutes from "./routes/galleryroutes.js"; // 🆕 NEW
+import blogRoutes from "./routes/blogRoutes.js"; // 🆕 NEW
 
 dotenv.config();
 
@@ -77,7 +78,7 @@ app.use("/api/tax-deadlines", taxDeadlineRoutes);
 app.use("/api/registration", registrationRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/gallery", galleryRoutes); // 🆕 NEW - Gallery management routes
-
+app.use("/api/blogs", blogRoutes);
 // Static files
 app.use("/uploads", express.static("uploads"));
 

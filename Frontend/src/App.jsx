@@ -15,6 +15,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import RegistrationPage from "./pages/RegistrationPage";
 import GalleryPage from "./pages/gallerypage"; // ✅ NEW - Gallery page component
 // import HomeGallery from "./pages/homegallery";
+import BlogDetail from "./pages/BlogDetail";
 
 
 
@@ -55,6 +56,7 @@ export default function App() {
 <Route path="/registration" element={<RegistrationPage />} />
 <Route path="/gallery" element={<GalleryPage />} />
 {/* <Route path="/home-gallery" element={<HomeGallery />} /> */}
+<Route path="/blogs/:id" element={<BlogDetail />} />
 
 
       </Routes>

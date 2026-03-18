@@ -1679,6 +1679,8 @@ import Hero from "../components/Hero";
 import Footer from "../components/Footer";
 import HomeGallery from "../components/homegallery"; // ✅ FIXED: Import from components not pages
 import TaxDeadlineTracker from "../components/TaxDeadlineTracker";
+import BlogsSection from "../components/BlogsSection";
+
 
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -2391,6 +2393,12 @@ export default function Home() {
       <ScrollReveal>
         <HomeGallery/>
       </ScrollReveal>
+
+
+      {/* ================= BLOGS SECTION ================= */}   
+ <ScrollReveal>
+  <BlogsSection />
+ </ScrollReveal>
 
 
       {/* ================= GET IN TOUCH SECTION ================= */}

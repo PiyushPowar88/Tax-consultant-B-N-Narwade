@@ -1474,6 +1474,2253 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Correct code for dashboard
+
+
+
+
+// import { useEffect, useState } from "react";
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
+
+// const BASE_URL = "http://localhost:5000";
+
+// const FileBtn = ({ filePath, label }) => {
+//   if (!filePath) return <span className="text-gray-300 text-xs">—</span>;
+//   const ext = filePath.split(".").pop().toLowerCase();
+//   const icon = ext === "pdf" ? "📄" : "🖼️";
+//   return (
+//     <button
+//       onClick={() => window.open(`${BASE_URL}/${filePath}`, "_blank")}
+//       className="inline-flex items-center gap-1 bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 rounded px-2 py-1 text-xs font-medium transition"
+//     >
+//       {icon} {label}
+//     </button>
+//   );
+// };
+
+// export default function Dashboard() {
+//   const navigate = useNavigate();
+//   const token = localStorage.getItem("token");
+
+//   // ================= STATES =================
+//   const [services, setServices] = useState([]);
+//   const [images, setImages] = useState([]);
+//   const [inquiries, setInquiries] = useState([]);
+//   const [deadlines, setDeadlines] = useState([]);
+//   const [activeTab, setActiveTab] = useState("services");
+//   const [unreadCount, setUnreadCount] = useState(0);
+
+//   const [registrationType, setRegistrationType] = useState("income-tax");
+//   const [registrations, setRegistrations] = useState([]);
+//   const [regLoading, setRegLoading] = useState(false);
+//   const [regSearch, setRegSearch] = useState("");
+//   const [regSummary, setRegSummary] = useState({ income_tax: 0, gst: 0, udyam: 0 });
+
+//   const [form, setForm] = useState({ title: "", short_description: "", full_description: "" });
+//   const [serviceImageFile, setServiceImageFile] = useState(null);
+//   const [serviceImagePreview, setServiceImagePreview] = useState(null);
+//   const [imageForm, setImageForm] = useState({ image_type: "owner", file: null, preview: null });
+
+//   const [deadlineForm, setDeadlineForm] = useState({
+//     category: "ITR",
+//     name: "",
+//     form_type: "",
+//     frequency: "yearly",
+//     rule_day: "",
+//     rule_month: "",
+//     is_auto: true,
+//     manual_due_date: ""
+//   });
+//   const [editingId, setEditingId] = useState(null);
+//   const [uploading, setUploading] = useState(false);
+
+//   // ================= GALLERY STATES =================
+//   const [galleryImages, setGalleryImages] = useState([]);
+//   const [galleryForm, setGalleryForm] = useState({ caption: "", file: null, preview: null });
+//   const [galleryUploading, setGalleryUploading] = useState(false);
+//   const [galleryPage, setGalleryPage] = useState(1);
+//   const [galleryPagination, setGalleryPagination] = useState({ total: 0, pages: 1, limit: 10 });
+
+//   // ================= AUTH CHECK =================
+//   useEffect(() => {
+//     if (!token) navigate("/admin");
+//   }, [token, navigate]);
+
+//   // ================= LOAD DATA =================
+//   const loadServices = () => {
+//     axios
+//       .get(`${BASE_URL}/api/admin/services`, { headers: { Authorization: token } })
+//       .then(res => setServices(res.data))
+//       .catch(err => console.error("❌ Error loading services:", err.message));
+//   };
+
+//   const loadImages = () => {
+//     axios
+//       .get(`${BASE_URL}/api/images/admin/all`, { headers: { Authorization: token } })
+//       .then(res => setImages(res.data))
+//       .catch(err => console.error("❌ Error loading images:", err.message));
+//   };
+
+//   const loadInquiries = () => {
+//     axios
+//       .get(`${BASE_URL}/api/inquiry`, { headers: { Authorization: token } })
+//       .then(res => {
+//         setInquiries(res.data.data || res.data);
+//         const unread = (res.data.data || res.data).filter(i => i.is_read === 0).length;
+//         setUnreadCount(unread);
+//       })
+//       .catch(err => console.error("❌ Error loading inquiries:", err.message));
+//   };
+
+//   const loadDeadlines = () => {
+//     axios
+//       .get(`${BASE_URL}/api/tax-deadlines`)
+//       .then(res => setDeadlines(res.data.data || res.data))
+//       .catch(err => console.error("❌ Error loading deadlines:", err.message));
+//   };
+
+//   const loadRegSummary = () => {
+//     axios
+//       .get(`${BASE_URL}/api/dashboard/summary`)
+//       .then(res => setRegSummary(res.data))
+//       .catch(err => console.error("❌ Error loading summary:", err.message));
+//   };
+
+//   const loadGalleryImages = (page = 1) => {
+//     const offset = (page - 1) * galleryPagination.limit;
+//     axios
+//       .get(`${BASE_URL}/api/gallery`, {
+//         params: { limit: 10, offset },
+//         headers: { Authorization: token }
+//       })
+//       .then(res => {
+//         setGalleryImages(res.data.data);
+//         setGalleryPagination(res.data.pagination);
+//         setGalleryPage(page);
+//       })
+//       .catch(err => console.error("❌ Error loading gallery:", err.message));
+//   };
+
+//   // Load all data on mount
+//   useEffect(() => {
+//     if (token) {
+//       loadServices();
+//       loadImages();
+//       loadInquiries();
+//       loadDeadlines();
+//       loadRegSummary();
+//       loadGalleryImages();
+//     }
+//   }, [token]);
+
+//   // Load registrations when tab or type changes
+//   useEffect(() => {
+//     if (activeTab !== "registrations") return;
+//     setRegLoading(true);
+//     setRegSearch("");
+//     axios
+//       .get(`${BASE_URL}/api/dashboard/${registrationType}`)
+//       .then(res => {
+//         setRegistrations(res.data.data || res.data);
+//         setRegLoading(false);
+//       })
+//       .catch(err => {
+//         console.error("❌ Error loading registrations:", err.message);
+//         setRegLoading(false);
+//       });
+//   }, [registrationType, activeTab]);
+
+//   // ================= DEADLINES HANDLERS =================
+//   const saveDeadline = () => {
+//     if (!deadlineForm.name || !deadlineForm.rule_day) {
+//       alert("Please fill required fields");
+//       return;
+//     }
+//     if (deadlineForm.frequency === "yearly" && !deadlineForm.rule_month) {
+//       alert("Please enter rule month");
+//       return;
+//     }
+//     if (!deadlineForm.is_auto && !deadlineForm.manual_due_date) {
+//       alert("Please select manual due date");
+//       return;
+//     }
+
+//     const payload = {
+//       ...deadlineForm,
+//       rule_day: Number(deadlineForm.rule_day),
+//       rule_month: deadlineForm.frequency === "yearly" ? Number(deadlineForm.rule_month) : null,
+//       manual_due_date: deadlineForm.is_auto ? null : deadlineForm.manual_due_date
+//     };
+
+//     if (editingId) {
+//       axios
+//         .put(`${BASE_URL}/api/tax-deadlines/${editingId}`, payload, { headers: { Authorization: token } })
+//         .then(() => {
+//           alert("✅ Deadline updated");
+//           resetDeadline();
+//         })
+//         .catch(() => alert("❌ Error updating deadline"));
+//     } else {
+//       axios
+//         .post(`${BASE_URL}/api/tax-deadlines`, payload, { headers: { Authorization: token } })
+//         .then(() => {
+//           alert("✅ Deadline saved");
+//           resetDeadline();
+//         })
+//         .catch(() => alert("❌ Error saving deadline"));
+//     }
+//   };
+
+//   const deleteDeadline = (id) => {
+//     if (!window.confirm("Delete this deadline?")) return;
+//     axios
+//       .delete(`${BASE_URL}/api/tax-deadlines/${id}`, { headers: { Authorization: token } })
+//       .then(() => {
+//         alert("✅ Deadline deleted");
+//         loadDeadlines();
+//       })
+//       .catch(() => alert("❌ Error deleting deadline"));
+//   };
+
+//   const resetDeadline = () => {
+//     setDeadlineForm({
+//       category: "ITR",
+//       name: "",
+//       form_type: "",
+//       frequency: "yearly",
+//       rule_day: "",
+//       rule_month: "",
+//       is_auto: true,
+//       manual_due_date: ""
+//     });
+//     setEditingId(null);
+//     loadDeadlines();
+//   };
+
+//   // ================= SERVICES HANDLERS =================
+//   const handleServiceImageChange = (e) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => {
+//         setServiceImageFile(file);
+//         setServiceImagePreview(reader.result);
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   const addService = () => {
+//     if (!form.title || !form.short_description || !form.full_description) {
+//       alert("Please fill all service fields");
+//       return;
+//     }
+
+//     axios
+//       .post(`${BASE_URL}/api/admin/services`, form, { headers: { Authorization: token } })
+//       .then(res => {
+//         const serviceId = res.data.id;
+//         if (serviceImageFile) {
+//           const formData = new FormData();
+//           formData.append("image", serviceImageFile);
+//           formData.append("service_id", serviceId);
+//           axios
+//             .post(`${BASE_URL}/api/admin/services/upload-image`, formData, {
+//               headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+//             })
+//             .then(() => {
+//               alert("✅ Service added with image");
+//               resetServiceForm();
+//             })
+//             .catch(() => alert("❌ Error uploading service image"));
+//         } else {
+//           alert("✅ Service added");
+//           resetServiceForm();
+//         }
+//       })
+//       .catch(() => alert("❌ Error adding service"));
+//   };
+
+//   const resetServiceForm = () => {
+//     setForm({ title: "", short_description: "", full_description: "" });
+//     setServiceImageFile(null);
+//     setServiceImagePreview(null);
+//     loadServices();
+//   };
+
+//   const deleteService = (id) => {
+//     if (!window.confirm("Delete this service?")) return;
+//     axios
+//       .delete(`${BASE_URL}/api/admin/services/${id}`, { headers: { Authorization: token } })
+//       .then(() => {
+//         alert("✅ Service deleted");
+//         loadServices();
+//       })
+//       .catch(() => alert("❌ Error deleting service"));
+//   };
+
+//   // ================= IMAGES HANDLERS =================
+//   const handleImageChange = (e) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => {
+//         setImageForm({ ...imageForm, file, preview: reader.result });
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   const uploadImage = () => {
+//     if (!imageForm.file) {
+//       alert("Select an image first");
+//       return;
+//     }
+//     setUploading(true);
+//     const formData = new FormData();
+//     formData.append("image", imageForm.file);
+//     formData.append("image_type", imageForm.image_type);
+//     formData.append("image_name", imageForm.file.name);
+
+//     axios
+//       .post(`${BASE_URL}/api/images/upload`, formData, {
+//         headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+//       })
+//       .then(() => {
+//         alert("✅ Image uploaded");
+//         setImageForm({ image_type: "owner", file: null, preview: null });
+//         const imageInput = document.getElementById("imageInput");
+//         if (imageInput) imageInput.value = "";
+//         loadImages();
+//       })
+//       .catch(() => alert("❌ Error uploading image"))
+//       .finally(() => setUploading(false));
+//   };
+
+//   const deleteImage = (id) => {
+//     if (!window.confirm("Delete this image?")) return;
+//     axios
+//       .delete(`${BASE_URL}/api/images/${id}`, { headers: { Authorization: token } })
+//       .then(() => {
+//         alert("✅ Image deleted");
+//         loadImages();
+//       })
+//       .catch(() => alert("❌ Error deleting image"));
+//   };
+
+//   // ================= INQUIRIES HANDLERS =================
+//   const markAsRead = (id) => {
+//     axios
+//       .put(`${BASE_URL}/api/inquiry/${id}/read`, {}, { headers: { Authorization: token } })
+//       .then(() => {
+//         alert("✅ Marked as read");
+//         loadInquiries();
+//       })
+//       .catch(() => alert("❌ Error updating inquiry"));
+//   };
+
+//   // ================= GALLERY HANDLERS =================
+//   const handleGalleryImageChange = (e) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => {
+//         setGalleryForm({ ...galleryForm, file, preview: reader.result });
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   const uploadGalleryImage = () => {
+//     if (!galleryForm.file) {
+//       alert("Select an image first");
+//       return;
+//     }
+//     setGalleryUploading(true);
+//     const formData = new FormData();
+//     formData.append("image", galleryForm.file);
+//     formData.append("caption", galleryForm.caption);
+
+//     axios
+//       .post(`${BASE_URL}/api/gallery`, formData, {
+//         headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+//       })
+//       .then(() => {
+//         alert("✅ Gallery image uploaded");
+//         setGalleryForm({ caption: "", file: null, preview: null });
+//         const galleryInput = document.getElementById("galleryInput");
+//         if (galleryInput) galleryInput.value = "";
+//         loadGalleryImages(1);
+//       })
+//       .catch(() => alert("❌ Error uploading gallery image"))
+//       .finally(() => setGalleryUploading(false));
+//   };
+
+//   const deleteGalleryImage = (id) => {
+//     if (!window.confirm("Delete this gallery image?")) return;
+//     axios
+//       .delete(`${BASE_URL}/api/gallery/${id}`, { headers: { Authorization: token } })
+//       .then(() => {
+//         alert("✅ Gallery image deleted");
+//         loadGalleryImages(1);
+//       })
+//       .catch(() => alert("❌ Error deleting gallery image"));
+//   };
+
+//   // ================= REGISTRATIONS HANDLERS =================
+//   const deleteRegistration = (id) => {
+//     if (!window.confirm("Are you sure you want to delete this record?")) return;
+//     axios
+//       .delete(`${BASE_URL}/api/dashboard/${registrationType}/${id}`, { headers: { Authorization: token } })
+//       .then(() => {
+//         setRegistrations(prev => prev.filter(r => r.id !== id));
+//         loadRegSummary();
+//         alert("✅ Registration deleted");
+//       })
+//       .catch(() => alert("❌ Error deleting registration"));
+//   };
+
+//   const filteredRegs = registrations.filter(r => {
+//     if (!regSearch.trim()) return true;
+//     const q = regSearch.toLowerCase();
+//     return (
+//       r.full_name?.toLowerCase().includes(q) ||
+//       r.email?.toLowerCase().includes(q) ||
+//       r.mobile?.includes(q)
+//     );
+//   });
+
+//   // ================= RENDER =================
+//   return (
+//     <div className="min-h-screen bg-gray-50 flex">
+//       {/* ══════════════════════════════════
+//            LEFT SIDEBAR
+//       ══════════════════════════════════ */}
+//       <div className="w-64 min-h-screen bg-gradient-to-b from-teal-700 to-teal-900 flex flex-col fixed left-0 top-0 z-30">
+//         {/* Brand */}
+//         <div className="px-6 py-7 border-b border-teal-600">
+//           <h1 className="text-xl font-bold text-white">⚙️ Admin Panel</h1>
+//           <p className="text-teal-300 text-xs mt-1">Manage Website</p>
+//         </div>
+
+//         {/* Navigation */}
+//         <nav className="flex-1 px-3 py-6 space-y-1">
+//           {[
+//             { key: "services", label: "Services", icon: "📋" },
+//             { key: "images", label: "Images", icon: "🖼️" },
+//             { key: "gallery", label: "Gallery", icon: "🎨" },
+//             { key: "inquiries", label: "Inquiries", icon: "📩" },
+//             { key: "deadlines", label: "Deadlines", icon: "⏰" },
+//             { key: "registrations", label: "Registrations", icon: "📁" }
+//           ].map(tab => (
+//             <button
+//               key={tab.key}
+//               onClick={() => setActiveTab(tab.key)}
+//               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
+//                 activeTab === tab.key
+//                   ? "bg-white text-teal-700 shadow"
+//                   : "text-teal-100 hover:bg-teal-600"
+//               }`}
+//             >
+//               <span className="text-base">{tab.icon}</span>
+//               <span>{tab.label}</span>
+//               {tab.key === "inquiries" && unreadCount > 0 && (
+//                 <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+//                   {unreadCount}
+//                 </span>
+//               )}
+//             </button>
+//           ))}
+//         </nav>
+
+//         {/* Back to Home */}
+//         <div className="px-3 py-5 border-t border-teal-600">
+//           <button
+//             onClick={() => navigate("/")}
+//             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-teal-100 hover:bg-teal-600 transition"
+//           >
+//             <span>🏠</span>
+//             <span>Back to Home</span>
+//           </button>
+//         </div>
+//       </div>
+
+//       {/* ══════════════════════════════════
+//            MAIN CONTENT
+//       ══════════════════════════════════ */}
+//       <div className="ml-64 flex-1 flex flex-col min-h-screen">
+//         {/* Top Bar */}
+//         <div className="bg-white border-b px-8 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+//           <h2 className="text-lg font-bold text-gray-700 capitalize">
+//             {activeTab.replace("-", " ")}
+//           </h2>
+//           <button onClick={() => setActiveTab("inquiries")} className="relative text-2xl hover:scale-110 transition">
+//             🔔
+//             {unreadCount > 0 && (
+//               <span className="absolute -top-1 -right-1 bg-red-500 text-xs px-2 rounded-full text-white font-bold">
+//                 {unreadCount}
+//               </span>
+//             )}
+//           </button>
+//         </div>
+
+//         {/* Page Content */}
+//         <div className="p-8">
+//           {/* ================= GALLERY ================= */}
+//           {activeTab === "gallery" && (
+//             <>
+//               <div className="bg-white p-6 rounded shadow mb-8 grid md:grid-cols-2 gap-6">
+//                 <div>
+//                   <h2 className="font-bold mb-3">Upload Gallery Image</h2>
+//                   <textarea
+//                     className="w-full border p-2 mb-3 h-20 rounded"
+//                     placeholder="Image caption (optional)"
+//                     value={galleryForm.caption}
+//                     onChange={e => setGalleryForm({ ...galleryForm, caption: e.target.value })}
+//                   />
+//                   <input
+//                     id="galleryInput"
+//                     type="file"
+//                     accept="image/*"
+//                     onChange={handleGalleryImageChange}
+//                     className="mb-2 w-full"
+//                   />
+//                   <button
+//                     onClick={uploadGalleryImage}
+//                     disabled={galleryUploading}
+//                     className="bg-teal-500 text-white w-full py-2 rounded font-semibold hover:bg-teal-600 disabled:opacity-50"
+//                   >
+//                     {galleryUploading ? "Uploading..." : "Upload to Gallery"}
+//                   </button>
+//                 </div>
+//                 <div className="border-2 flex items-center justify-center h-48 rounded bg-gray-50">
+//                   {galleryForm.preview ? (
+//                     <img src={galleryForm.preview} alt="Preview" className="h-full rounded" />
+//                   ) : (
+//                     <p className="text-gray-400 text-center">Image Preview</p>
+//                   )}
+//                 </div>
+//               </div>
+
+//               {/* Gallery Images Table */}
+//               <div className="bg-white rounded shadow overflow-x-auto">
+//                 <table className="w-full">
+//                   <thead className="bg-gray-100">
+//                     <tr>
+//                       <th className="p-3 text-left">ID</th>
+//                       <th className="p-3 text-left">Image</th>
+//                       <th className="p-3 text-left">Caption</th>
+//                       <th className="p-3 text-left">Uploaded</th>
+//                       <th className="p-3 text-left">Action</th>
+//                     </tr>
+//                   </thead>
+//                   <tbody>
+//                     {galleryImages.map(img => (
+//                       <tr key={img.id} className="border-t hover:bg-gray-50">
+//                         <td className="p-3">{img.id}</td>
+//                         <td className="p-3">
+//                           <img
+//                             src={`${BASE_URL}/${img.image_path}`}
+//                             alt="Gallery"
+//                             className="h-12 w-12 object-cover rounded"
+//                           />
+//                         </td>
+//                         <td className="p-3 max-w-xs truncate">{img.caption || "—"}</td>
+//                         <td className="p-3 text-gray-500 text-sm">
+//                           {new Date(img.uploaded_at).toLocaleDateString("en-IN")}
+//                         </td>
+//                         <td className="p-3">
+//                           <button
+//                             onClick={() => deleteGalleryImage(img.id)}
+//                             className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+//                           >
+//                             Delete
+//                           </button>
+//                         </td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </table>
+//                 {galleryImages.length === 0 && (
+//                   <div className="p-8 text-center text-gray-400">No gallery images yet</div>
+//                 )}
+//               </div>
+
+//               {/* Pagination */}
+//               {galleryPagination.pages > 1 && (
+//                 <div className="flex justify-center gap-2 mt-4">
+//                   {Array.from({ length: galleryPagination.pages }, (_, i) => i + 1).map(page => (
+//                     <button
+//                       key={page}
+//                       onClick={() => loadGalleryImages(page)}
+//                       className={`px-4 py-2 rounded ${
+//                         galleryPage === page
+//                           ? "bg-teal-600 text-white"
+//                           : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+//                       }`}
+//                     >
+//                       {page}
+//                     </button>
+//                   ))}
+//                 </div>
+//               )}
+//             </>
+//           )}
+
+//           {/* ================= DEADLINES ================= */}
+//           {activeTab === "deadlines" && (
+//             <div className="bg-white p-6 rounded shadow">
+//               <h2 className="font-bold mb-4 text-lg">Manage Tax Deadlines</h2>
+//               <select className="border p-2 w-full mb-2 rounded" value={deadlineForm.category} onChange={e => setDeadlineForm({ ...deadlineForm, category: e.target.value })}>
+//                 <option value="ITR">Income Tax</option>
+//                 <option value="GST">GST</option>
+//               </select>
+//               <input
+//                 className="border p-2 w-full mb-2 rounded"
+//                 placeholder="Name (Ex: GSTR-1, Salaried)"
+//                 value={deadlineForm.name}
+//                 onChange={e => setDeadlineForm({ ...deadlineForm, name: e.target.value })}
+//               />
+//               <input
+//                 className="border p-2 w-full mb-2 rounded"
+//                 placeholder="Form / Type"
+//                 value={deadlineForm.form_type}
+//                 onChange={e => setDeadlineForm({ ...deadlineForm, form_type: e.target.value })}
+//               />
+//               <select className="border p-2 w-full mb-2 rounded" value={deadlineForm.frequency} onChange={e => setDeadlineForm({ ...deadlineForm, frequency: e.target.value })}>
+//                 <option value="yearly">Yearly</option>
+//                 <option value="monthly">Monthly</option>
+//               </select>
+//               <input
+//                 type="number"
+//                 className="border p-2 w-full mb-2 rounded"
+//                 placeholder="Rule Day (Example: 31 or 20)"
+//                 value={deadlineForm.rule_day}
+//                 onChange={e => setDeadlineForm({ ...deadlineForm, rule_day: e.target.value })}
+//               />
+//               {deadlineForm.frequency === "yearly" && (
+//                 <input
+//                   type="number"
+//                   className="border p-2 w-full mb-2 rounded"
+//                   placeholder="Rule Month (1-12)"
+//                   value={deadlineForm.rule_month}
+//                   onChange={e => setDeadlineForm({ ...deadlineForm, rule_month: e.target.value })}
+//                 />
+//               )}
+//               <label className="flex items-center gap-2 mb-2">
+//                 <input
+//                   type="checkbox"
+//                   checked={deadlineForm.is_auto}
+//                   onChange={e => setDeadlineForm({ ...deadlineForm, is_auto: e.target.checked })}
+//                 />
+//                 Auto Mode
+//               </label>
+//               {!deadlineForm.is_auto && (
+//                 <input
+//                   type="date"
+//                   className="border p-2 w-full mb-3 rounded"
+//                   value={deadlineForm.manual_due_date}
+//                   onChange={e => setDeadlineForm({ ...deadlineForm, manual_due_date: e.target.value })}
+//                 />
+//               )}
+//               <button onClick={saveDeadline} className="bg-teal-500 text-white w-full py-2 rounded font-semibold hover:bg-teal-600">
+//                 {editingId ? "Update Deadline" : "Save Deadline"}
+//               </button>
+//               <div className="mt-6 space-y-2">
+//                 {deadlines.map(d => (
+//                   <div key={d.id} className="flex justify-between items-center border p-3 rounded hover:bg-gray-50">
+//                     <div>
+//                       <b>{d.name}</b> <span className="text-gray-500">({d.category})</span>
+//                       <span className="ml-2 text-sm text-gray-600">📅 {d.due_date}</span>
+//                     </div>
+//                     <div className="space-x-2">
+//                       <button
+//                         onClick={() => {
+//                           setDeadlineForm({
+//                             category: d.category,
+//                             name: d.name,
+//                             form_type: d.form_type,
+//                             frequency: d.frequency,
+//                             rule_day: d.rule_day,
+//                             rule_month: d.rule_month,
+//                             is_auto: d.is_auto,
+//                             manual_due_date: d.manual_due_date ? d.manual_due_date.split("T")[0] : ""
+//                           });
+//                           setEditingId(d.id);
+//                         }}
+//                         className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+//                       >
+//                         Edit
+//                       </button>
+//                       <button
+//                         onClick={() => deleteDeadline(d.id)}
+//                         className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+//                       >
+//                         Delete
+//                       </button>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//           )}
+
+//           {/* ================= SERVICES ================= */}
+//           {activeTab === "services" && (
+//             <>
+//               <div className="bg-white p-6 rounded shadow mb-8">
+//                 <h2 className="font-bold mb-4">Add Service</h2>
+//                 <input
+//                   className="w-full border p-2 mb-2 rounded"
+//                   placeholder="Title"
+//                   value={form.title}
+//                   onChange={e => setForm({ ...form, title: e.target.value })}
+//                 />
+//                 <input
+//                   className="w-full border p-2 mb-2 rounded"
+//                   placeholder="Short Description"
+//                   value={form.short_description}
+//                   onChange={e => setForm({ ...form, short_description: e.target.value })}
+//                 />
+//                 <textarea
+//                   className="w-full border p-2 mb-2 h-24 rounded"
+//                   placeholder="Full Description"
+//                   value={form.full_description}
+//                   onChange={e => setForm({ ...form, full_description: e.target.value })}
+//                 />
+//                 <input
+//                   type="file"
+//                   accept="image/*"
+//                   onChange={handleServiceImageChange}
+//                   className="mb-2"
+//                 />
+//                 {serviceImagePreview && (
+//                   <img src={serviceImagePreview} alt="Preview" className="h-32 mt-2 rounded" />
+//                 )}
+//                 <button
+//                   onClick={addService}
+//                   className="bg-teal-500 text-white w-full py-2 mt-3 rounded font-semibold hover:bg-teal-600"
+//                 >
+//                   Add Service
+//                 </button>
+//               </div>
+//               <div className="bg-white rounded shadow overflow-x-auto">
+//                 <table className="w-full">
+//                   <thead className="bg-gray-100">
+//                     <tr>
+//                       <th className="p-3 text-left">ID</th>
+//                       <th className="p-3 text-left">Title</th>
+//                       <th className="p-3 text-left">Short Desc</th>
+//                       <th className="p-3 text-left">Action</th>
+//                     </tr>
+//                   </thead>
+//                   <tbody>
+//                     {services.map(s => (
+//                       <tr key={s.id} className="border-t hover:bg-gray-50">
+//                         <td className="p-3">{s.id}</td>
+//                         <td className="p-3 font-medium">{s.title}</td>
+//                         <td className="p-3">{s.short_description}</td>
+//                         <td className="p-3">
+//                           <button
+//                             onClick={() => deleteService(s.id)}
+//                             className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+//                           >
+//                             Delete
+//                           </button>
+//                         </td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </table>
+//               </div>
+//             </>
+//           )}
+
+//           {/* ================= IMAGES ================= */}
+//           {activeTab === "images" && (
+//             <>
+//               <div className="bg-white p-6 rounded shadow mb-8 grid md:grid-cols-2 gap-6">
+//                 <div>
+//                   <h2 className="font-bold mb-3">Upload Image</h2>
+//                   <select
+//                     className="w-full border p-2 mb-3 rounded"
+//                     value={imageForm.image_type}
+//                     onChange={e => setImageForm({ ...imageForm, image_type: e.target.value })}
+//                   >
+//                     <option value="logo">Logo</option>
+//                     <option value="owner">Owner</option>
+//                     <option value="clients_logo">Clients</option>
+//                     <option value="hero">Hero</option>
+//                   </select>
+//                   <input
+//                     id="imageInput"
+//                     type="file"
+//                     accept="image/*"
+//                     onChange={handleImageChange}
+//                     className="mb-2"
+//                   />
+//                   <button
+//                     onClick={uploadImage}
+//                     disabled={uploading}
+//                     className="bg-teal-500 text-white w-full py-2 mt-3 rounded font-semibold hover:bg-teal-600 disabled:opacity-50"
+//                   >
+//                     {uploading ? "Uploading..." : "Upload"}
+//                   </button>
+//                 </div>
+//                 <div className="border-2 flex items-center justify-center h-48 rounded bg-gray-50">
+//                   {imageForm.preview ? (
+//                     <img src={imageForm.preview} alt="Preview" className="h-full rounded" />
+//                   ) : (
+//                     <p className="text-gray-400 text-center">Image Preview</p>
+//                   )}
+//                 </div>
+//               </div>
+//               <div className="bg-white rounded shadow overflow-x-auto">
+//                 <table className="w-full">
+//                   <thead className="bg-gray-100">
+//                     <tr>
+//                       <th className="p-3 text-left">ID</th>
+//                       <th className="p-3 text-left">Type</th>
+//                       <th className="p-3 text-left">Name</th>
+//                       <th className="p-3 text-left">Preview</th>
+//                       <th className="p-3 text-left">Action</th>
+//                     </tr>
+//                   </thead>
+//                   <tbody>
+//                     {images.map(img => (
+//                       <tr key={img.id} className="border-t hover:bg-gray-50">
+//                         <td className="p-3">{img.id}</td>
+//                         <td className="p-3">{img.image_type}</td>
+//                         <td className="p-3">{img.image_name}</td>
+//                         <td className="p-3">
+//                           <a
+//                             href={`${BASE_URL}/uploads/${img.image_name}`}
+//                             target="_blank"
+//                             rel="noopener noreferrer"
+//                             className="text-blue-600 hover:underline"
+//                           >
+//                             View
+//                           </a>
+//                         </td>
+//                         <td className="p-3">
+//                           <button
+//                             onClick={() => deleteImage(img.id)}
+//                             className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+//                           >
+//                             Delete
+//                           </button>
+//                         </td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </table>
+//               </div>
+//             </>
+//           )}
+
+//           {/* ================= INQUIRIES ================= */}
+//           {activeTab === "inquiries" && (
+//             <div className="bg-white rounded shadow overflow-x-auto">
+//               <table className="w-full">
+//                 <thead className="bg-gray-100">
+//                   <tr>
+//                     <th className="p-3 text-left">ID</th>
+//                     <th className="p-3 text-left">Name</th>
+//                     <th className="p-3 text-left">Email</th>
+//                     <th className="p-3 text-left">Phone</th>
+//                     <th className="p-3 text-left">Message</th>
+//                     <th className="p-3 text-left">Status</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody>
+//                   {inquiries.map(i => (
+//                     <tr
+//                       key={i.id}
+//                       className={`border-t hover:bg-gray-50 ${i.is_read === 0 ? "bg-yellow-50" : ""}`}
+//                     >
+//                       <td className="p-3">{i.id}</td>
+//                       <td className="p-3 font-medium">
+//                         {i.name}
+//                         {i.visit_count > 1 && (
+//                           <span className="ml-2 bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full font-semibold">
+//                             🔁 Returning ({i.visit_count}x)
+//                           </span>
+//                         )}
+//                       </td>
+//                       <td className="p-3">{i.email}</td>
+//                       <td className="p-3">{i.phone}</td>
+//                       <td className="p-3 max-w-xs truncate">{i.message}</td>
+//                       <td className="p-3">
+//                         {i.is_read === 0 ? (
+//                           <button
+//                             onClick={() => markAsRead(i.id)}
+//                             className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+//                           >
+//                             Mark Read
+//                           </button>
+//                         ) : (
+//                           <span className="text-green-600 font-semibold">✅ Read</span>
+//                         )}
+//                       </td>
+//                     </tr>
+//                   ))}
+//                 </tbody>
+//               </table>
+//               {inquiries.length === 0 && (
+//                 <div className="p-8 text-center text-gray-400">No inquiries found</div>
+//               )}
+//             </div>
+//           )}
+
+//           {/* ================= REGISTRATIONS ================= */}
+//           {activeTab === "registrations" && (
+//             <div>
+//               {/* Summary Cards */}
+//               <div className="grid grid-cols-3 gap-4 mb-6">
+//                 {[
+//                   { key: "income-tax", label: "Income Tax", count: regSummary.income_tax },
+//                   { key: "gst", label: "GST", count: regSummary.gst },
+//                   { key: "udyam", label: "Udyam", count: regSummary.udyam }
+//                 ].map(card => (
+//                   <button
+//                     key={card.key}
+//                     onClick={() => setRegistrationType(card.key)}
+//                     className={`bg-white rounded-lg shadow p-5 text-left border-l-4 transition hover:-translate-y-0.5 ${
+//                       registrationType === card.key ? "border-teal-500" : "border-gray-200"
+//                     }`}
+//                   >
+//                     <div className="text-3xl font-bold text-teal-600">{card.count}</div>
+//                     <div className="text-sm text-gray-500 mt-1">📁 {card.label} Registrations</div>
+//                   </button>
+//                 ))}
+//               </div>
+
+//               {/* Sub Tabs */}
+//               <div className="flex gap-3 mb-4">
+//                 {[
+//                   { key: "income-tax", label: "📑 Income Tax" },
+//                   { key: "gst", label: "🏪 GST" },
+//                   { key: "udyam", label: "🏭 Udyam" }
+//                 ].map(t => (
+//                   <button
+//                     key={t.key}
+//                     onClick={() => setRegistrationType(t.key)}
+//                     className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+//                       registrationType === t.key
+//                         ? "bg-teal-500 text-white"
+//                         : "bg-white text-gray-500 border border-gray-200 hover:border-teal-300"
+//                     }`}
+//                   >
+//                     {t.label}
+//                   </button>
+//                 ))}
+//               </div>
+
+//               {/* Search */}
+//               <div className="flex justify-between items-center mb-4">
+//                 <input
+//                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-64 focus:outline-none focus:border-teal-400"
+//                   placeholder="🔍 Search by name, email, mobile..."
+//                   value={regSearch}
+//                   onChange={e => setRegSearch(e.target.value)}
+//                 />
+//                 <span className="text-sm text-gray-500">{filteredRegs.length} record(s)</span>
+//               </div>
+
+//               {/* Table */}
+//               <div className="bg-white rounded-lg shadow overflow-x-auto">
+//                 {regLoading ? (
+//                   <div className="p-12 text-center text-gray-400">⏳ Loading...</div>
+//                 ) : filteredRegs.length === 0 ? (
+//                   <div className="p-12 text-center text-gray-400">No records found</div>
+//                 ) : (
+//                   <table className="w-full text-sm">
+//                     <thead className="bg-gray-100 sticky top-0">
+//                       {registrationType === "income-tax" && (
+//                         <tr>
+//                           {[
+//                             "#", "Name", "Email", "Mobile", "PAN", "Aadhaar", "Salary",
+//                             "House Prop.", "Pension", "Agri.", "Cap. Gain", "Int. Savings",
+//                             "Int. Deposit", "Int. Refund", "Enh. Comp", "Other Int.",
+//                             "PAN Photo", "Aadhaar Front", "Aadhaar Back", "Date", "Action"
+//                           ].map(h => (
+//                             <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">
+//                               {h}
+//                             </th>
+//                           ))}
+//                         </tr>
+//                       )}
+//                       {registrationType === "gst" && (
+//                         <tr>
+//                           {[
+//                             "#", "Name", "Email", "Mobile", "PAN", "Aadhaar", "PAN Photo",
+//                             "Aadhaar", "Proprietor", "Address Proof", "Shop Act", "Udyam Cert",
+//                             "Shop Photo", "Bank Proof", "Signature", "Date", "Action"
+//                           ].map(h => (
+//                             <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">
+//                               {h}
+//                             </th>
+//                           ))}
+//                         </tr>
+//                       )}
+//                       {registrationType === "udyam" && (
+//                         <tr>
+//                           {[
+//                             "#", "Name", "Email", "Mobile", "PAN", "Aadhaar", "PAN Photo",
+//                             "Aadhaar", "Proprietor", "Address Proof", "Shop Act", "Bank Proof",
+//                             "Signature", "Date", "Action"
+//                           ].map(h => (
+//                             <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">
+//                               {h}
+//                             </th>
+//                           ))}
+//                         </tr>
+//                       )}
+//                     </thead>
+//                     <tbody>
+//                       {filteredRegs.map((row, i) => (
+//                         <tr key={row.id} className="border-t hover:bg-gray-50">
+//                           {registrationType === "income-tax" && (
+//                             <>
+//                               <td className="p-3">{i + 1}</td>
+//                               <td className="p-3 font-medium whitespace-nowrap">{row.full_name}</td>
+//                               <td className="p-3 whitespace-nowrap">{row.email}</td>
+//                               <td className="p-3">{row.mobile}</td>
+//                               <td className="p-3">{row.pan_number}</td>
+//                               <td className="p-3">{row.aadhaar_number}</td>
+//                               <td className="p-3">₹{row.salary_income || 0}</td>
+//                               <td className="p-3">₹{row.house_property_income || 0}</td>
+//                               <td className="p-3">₹{row.family_pension_income || 0}</td>
+//                               <td className="p-3">₹{row.agricultural_income || 0}</td>
+//                               <td className="p-3">₹{row.capital_gain_112a || 0}</td>
+//                               <td className="p-3">₹{row.interest_savings || 0}</td>
+//                               <td className="p-3">₹{row.interest_deposits || 0}</td>
+//                               <td className="p-3">₹{row.interest_refund || 0}</td>
+//                               <td className="p-3">₹{row.interest_enhanced_comp || 0}</td>
+//                               <td className="p-3">₹{row.other_interest_income || 0}</td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.pan_photo} label="PAN" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.aadhaar_photo} label="Front" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.aadhaar_back_photo} label="Back" />
+//                               </td>
+//                               <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
+//                                 {new Date(row.created_at).toLocaleDateString("en-IN")}
+//                               </td>
+//                               <td className="p-3">
+//                                 <button
+//                                   onClick={() => deleteRegistration(row.id)}
+//                                   className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition"
+//                                 >
+//                                   Delete
+//                                 </button>
+//                               </td>
+//                             </>
+//                           )}
+
+//                           {registrationType === "gst" && (
+//                             <>
+//                               <td className="p-3">{i + 1}</td>
+//                               <td className="p-3 font-medium whitespace-nowrap">{row.full_name}</td>
+//                               <td className="p-3 whitespace-nowrap">{row.email}</td>
+//                               <td className="p-3">{row.mobile}</td>
+//                               <td className="p-3">{row.pan_number}</td>
+//                               <td className="p-3">{row.aadhaar_number}</td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.pan_photo} label="PAN" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.aadhaar_photo} label="Aadhaar" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.proprietor_photo} label="Proprietor" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.business_address_proof} label="Address" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.shop_act_license} label="Shop Act" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.udyam_certificate} label="Udyam" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.shop_photo} label="Shop" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.bank_proof} label="Bank" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.signature} label="Sign" />
+//                               </td>
+//                               <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
+//                                 {new Date(row.created_at).toLocaleDateString("en-IN")}
+//                               </td>
+//                               <td className="p-3">
+//                                 <button
+//                                   onClick={() => deleteRegistration(row.id)}
+//                                   className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition"
+//                                 >
+//                                   Delete
+//                                 </button>
+//                               </td>
+//                             </>
+//                           )}
+
+//                           {registrationType === "udyam" && (
+//                             <>
+//                               <td className="p-3">{i + 1}</td>
+//                               <td className="p-3 font-medium whitespace-nowrap">{row.full_name}</td>
+//                               <td className="p-3 whitespace-nowrap">{row.email}</td>
+//                               <td className="p-3">{row.mobile}</td>
+//                               <td className="p-3">{row.pan_number}</td>
+//                               <td className="p-3">{row.aadhaar_number}</td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.pan_photo} label="PAN" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.aadhaar_photo} label="Aadhaar" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.proprietor_photo} label="Proprietor" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.business_address_proof} label="Address" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.shop_act_license} label="Shop Act" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.bank_proof} label="Bank" />
+//                               </td>
+//                               <td className="p-3">
+//                                 <FileBtn filePath={row.signature} label="Sign" />
+//                               </td>
+//                               <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
+//                                 {new Date(row.created_at).toLocaleDateString("en-IN")}
+//                               </td>
+//                               <td className="p-3">
+//                                 <button
+//                                   onClick={() => deleteRegistration(row.id)}
+//                                   className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition"
+//                                 >
+//                                   Delete
+//                                 </button>
+//                               </td>
+//                             </>
+//                           )}
+//                         </tr>
+//                       ))}
+//                     </tbody>
+//                   </table>
+//                 )}
+//               </div>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// coorect code with blog 
+
+// import { useEffect, useState } from "react";
+// import axios from "axios";
+// import { useNavigate } from "react-router-dom";
+
+// const BASE_URL = "http://localhost:5000";
+
+// const FileBtn = ({ filePath, label }) => {
+//   if (!filePath) return <span className="text-gray-300 text-xs">—</span>;
+//   const ext = filePath.split(".").pop().toLowerCase();
+//   const icon = ext === "pdf" ? "📄" : "🖼️";
+//   return (
+//     <button
+//       onClick={() => window.open(`${BASE_URL}/${filePath}`, "_blank")}
+//       className="inline-flex items-center gap-1 bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 rounded px-2 py-1 text-xs font-medium transition"
+//     >
+//       {icon} {label}
+//     </button>
+//   );
+// };
+
+// const BLOG_CATEGORIES = ["General", "GST", "Income Tax", "Business", "Compliance"];
+
+// export default function Dashboard() {
+//   const navigate = useNavigate();
+//   const token = localStorage.getItem("token");
+
+//   // ================= STATES =================
+//   const [services, setServices] = useState([]);
+//   const [images, setImages] = useState([]);
+//   const [inquiries, setInquiries] = useState([]);
+//   const [deadlines, setDeadlines] = useState([]);
+//   const [activeTab, setActiveTab] = useState("services");
+//   const [unreadCount, setUnreadCount] = useState(0);
+
+//   const [registrationType, setRegistrationType] = useState("income-tax");
+//   const [registrations, setRegistrations] = useState([]);
+//   const [regLoading, setRegLoading] = useState(false);
+//   const [regSearch, setRegSearch] = useState("");
+//   const [regSummary, setRegSummary] = useState({ income_tax: 0, gst: 0, udyam: 0 });
+
+//   const [form, setForm] = useState({ title: "", short_description: "", full_description: "" });
+//   const [serviceImageFile, setServiceImageFile] = useState(null);
+//   const [serviceImagePreview, setServiceImagePreview] = useState(null);
+//   const [imageForm, setImageForm] = useState({ image_type: "owner", file: null, preview: null });
+
+//   const [deadlineForm, setDeadlineForm] = useState({
+//     category: "ITR", name: "", form_type: "", frequency: "yearly",
+//     rule_day: "", rule_month: "", is_auto: true, manual_due_date: ""
+//   });
+//   const [editingId, setEditingId] = useState(null);
+//   const [uploading, setUploading] = useState(false);
+
+//   // ── GALLERY STATES ──
+//   const [galleryImages, setGalleryImages] = useState([]);
+//   const [galleryForm, setGalleryForm] = useState({ caption: "", file: null, preview: null });
+//   const [galleryUploading, setGalleryUploading] = useState(false);
+//   const [galleryPage, setGalleryPage] = useState(1);
+//   const [galleryPagination, setGalleryPagination] = useState({ total: 0, pages: 1, limit: 10 });
+
+//   // ── BLOG STATES ──
+//   const [blogs, setBlogs] = useState([]);
+//   const [blogForm, setBlogForm] = useState({
+//     title: "", summary: "", content: "", author: "Admin", category: "General"
+//   });
+//   const [blogImageFile, setBlogImageFile] = useState(null);
+//   const [blogImagePreview, setBlogImagePreview] = useState(null);
+//   const [blogUploading, setBlogUploading] = useState(false);
+//   const [editingBlogId, setEditingBlogId] = useState(null);
+
+//   // ================= AUTH CHECK =================
+//   useEffect(() => {
+//     if (!token) navigate("/admin");
+//   }, [token, navigate]);
+
+//   // ================= LOAD DATA =================
+//   const loadServices = () => {
+//     axios.get(`${BASE_URL}/api/admin/services`, { headers: { Authorization: token } })
+//       .then(res => setServices(res.data))
+//       .catch(err => console.error("❌ Services:", err.message));
+//   };
+//   const loadImages = () => {
+//     axios.get(`${BASE_URL}/api/images/admin/all`, { headers: { Authorization: token } })
+//       .then(res => setImages(res.data))
+//       .catch(err => console.error("❌ Images:", err.message));
+//   };
+//   const loadInquiries = () => {
+//     axios.get(`${BASE_URL}/api/inquiry`, { headers: { Authorization: token } })
+//       .then(res => {
+//         setInquiries(res.data.data || res.data);
+//         const unread = (res.data.data || res.data).filter(i => i.is_read === 0).length;
+//         setUnreadCount(unread);
+//       })
+//       .catch(err => console.error("❌ Inquiries:", err.message));
+//   };
+//   const loadDeadlines = () => {
+//     axios.get(`${BASE_URL}/api/tax-deadlines`)
+//       .then(res => setDeadlines(res.data.data || res.data))
+//       .catch(err => console.error("❌ Deadlines:", err.message));
+//   };
+//   const loadRegSummary = () => {
+//     axios.get(`${BASE_URL}/api/dashboard/summary`)
+//       .then(res => setRegSummary(res.data))
+//       .catch(err => console.error("❌ Summary:", err.message));
+//   };
+//   const loadGalleryImages = (page = 1) => {
+//     const offset = (page - 1) * galleryPagination.limit;
+//     axios.get(`${BASE_URL}/api/gallery`, {
+//       params: { limit: 10, offset }, headers: { Authorization: token }
+//     })
+//       .then(res => {
+//         setGalleryImages(res.data.data);
+//         setGalleryPagination(res.data.pagination);
+//         setGalleryPage(page);
+//       })
+//       .catch(err => console.error("❌ Gallery:", err.message));
+//   };
+
+//   // ── BLOG LOAD ──
+//   const loadBlogs = () => {
+//     axios.get(`${BASE_URL}/api/blogs`)
+//       .then(res => setBlogs(res.data))
+//       .catch(err => console.error("❌ Blogs:", err.message));
+//   };
+
+//   useEffect(() => {
+//     if (token) {
+//       loadServices(); loadImages(); loadInquiries();
+//       loadDeadlines(); loadRegSummary(); loadGalleryImages(); loadBlogs();
+//     }
+//   }, [token]);
+
+//   useEffect(() => {
+//     if (activeTab !== "registrations") return;
+//     setRegLoading(true);
+//     setRegSearch("");
+//     axios.get(`${BASE_URL}/api/dashboard/${registrationType}`)
+//       .then(res => { setRegistrations(res.data.data || res.data); setRegLoading(false); })
+//       .catch(err => { console.error("❌ Registrations:", err.message); setRegLoading(false); });
+//   }, [registrationType, activeTab]);
+
+//   // ================= BLOG HANDLERS =================
+//   const handleBlogImageChange = (e) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => { setBlogImageFile(file); setBlogImagePreview(reader.result); };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   const saveBlog = () => {
+//     if (!blogForm.title || !blogForm.summary || !blogForm.content) {
+//       alert("Please fill Title, Summary, and Content");
+//       return;
+//     }
+//     setBlogUploading(true);
+//     const formData = new FormData();
+//     formData.append("title", blogForm.title);
+//     formData.append("summary", blogForm.summary);
+//     formData.append("content", blogForm.content);
+//     formData.append("author", blogForm.author || "Admin");
+//     formData.append("category", blogForm.category || "General");
+//     if (blogImageFile) formData.append("image", blogImageFile);
+
+//     const request = editingBlogId
+//       ? axios.put(`${BASE_URL}/api/blogs/${editingBlogId}`, formData, {
+//           headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+//         })
+//       : axios.post(`${BASE_URL}/api/blogs`, formData, {
+//           headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+//         });
+
+//     request
+//       .then(() => {
+//         alert(editingBlogId ? "✅ Blog updated" : "✅ Blog published");
+//         resetBlogForm();
+//       })
+//       .catch(() => alert("❌ Error saving blog"))
+//       .finally(() => setBlogUploading(false));
+//   };
+
+//   const deleteBlog = (id) => {
+//     if (!window.confirm("Delete this blog?")) return;
+//     axios.delete(`${BASE_URL}/api/blogs/${id}`, { headers: { Authorization: token } })
+//       .then(() => { alert("✅ Blog deleted"); loadBlogs(); })
+//       .catch(() => alert("❌ Error deleting blog"));
+//   };
+
+//   const resetBlogForm = () => {
+//     setBlogForm({ title: "", summary: "", content: "", author: "Admin", category: "General" });
+//     setBlogImageFile(null);
+//     setBlogImagePreview(null);
+//     setEditingBlogId(null);
+//     const input = document.getElementById("blogImageInput");
+//     if (input) input.value = "";
+//     loadBlogs();
+//   };
+
+//   // ================= DEADLINE HANDLERS =================
+//   const saveDeadline = () => {
+//     if (!deadlineForm.name || !deadlineForm.rule_day) { alert("Please fill required fields"); return; }
+//     if (deadlineForm.frequency === "yearly" && !deadlineForm.rule_month) { alert("Please enter rule month"); return; }
+//     if (!deadlineForm.is_auto && !deadlineForm.manual_due_date) { alert("Please select manual due date"); return; }
+//     const payload = {
+//       ...deadlineForm,
+//       rule_day: Number(deadlineForm.rule_day),
+//       rule_month: deadlineForm.frequency === "yearly" ? Number(deadlineForm.rule_month) : null,
+//       manual_due_date: deadlineForm.is_auto ? null : deadlineForm.manual_due_date
+//     };
+//     const req = editingId
+//       ? axios.put(`${BASE_URL}/api/tax-deadlines/${editingId}`, payload, { headers: { Authorization: token } })
+//       : axios.post(`${BASE_URL}/api/tax-deadlines`, payload, { headers: { Authorization: token } });
+//     req.then(() => { alert(editingId ? "✅ Updated" : "✅ Saved"); resetDeadline(); })
+//        .catch(() => alert("❌ Error"));
+//   };
+//   const deleteDeadline = (id) => {
+//     if (!window.confirm("Delete this deadline?")) return;
+//     axios.delete(`${BASE_URL}/api/tax-deadlines/${id}`, { headers: { Authorization: token } })
+//       .then(() => { alert("✅ Deleted"); loadDeadlines(); })
+//       .catch(() => alert("❌ Error"));
+//   };
+//   const resetDeadline = () => {
+//     setDeadlineForm({ category: "ITR", name: "", form_type: "", frequency: "yearly", rule_day: "", rule_month: "", is_auto: true, manual_due_date: "" });
+//     setEditingId(null);
+//     loadDeadlines();
+//   };
+
+//   // ================= SERVICES HANDLERS =================
+//   const handleServiceImageChange = (e) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => { setServiceImageFile(file); setServiceImagePreview(reader.result); };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+//   const addService = () => {
+//     if (!form.title || !form.short_description || !form.full_description) { alert("Please fill all service fields"); return; }
+//     axios.post(`${BASE_URL}/api/admin/services`, form, { headers: { Authorization: token } })
+//       .then(res => {
+//         const serviceId = res.data.id;
+//         if (serviceImageFile) {
+//           const formData = new FormData();
+//           formData.append("image", serviceImageFile);
+//           formData.append("service_id", serviceId);
+//           axios.post(`${BASE_URL}/api/admin/services/upload-image`, formData, {
+//             headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+//           }).then(() => { alert("✅ Service added with image"); resetServiceForm(); })
+//             .catch(() => alert("❌ Error uploading service image"));
+//         } else { alert("✅ Service added"); resetServiceForm(); }
+//       })
+//       .catch(() => alert("❌ Error adding service"));
+//   };
+//   const resetServiceForm = () => {
+//     setForm({ title: "", short_description: "", full_description: "" });
+//     setServiceImageFile(null); setServiceImagePreview(null); loadServices();
+//   };
+//   const deleteService = (id) => {
+//     if (!window.confirm("Delete this service?")) return;
+//     axios.delete(`${BASE_URL}/api/admin/services/${id}`, { headers: { Authorization: token } })
+//       .then(() => { alert("✅ Deleted"); loadServices(); })
+//       .catch(() => alert("❌ Error"));
+//   };
+
+//   // ================= IMAGES HANDLERS =================
+//   const handleImageChange = (e) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => setImageForm({ ...imageForm, file, preview: reader.result });
+//       reader.readAsDataURL(file);
+//     }
+//   };
+//   const uploadImage = () => {
+//     if (!imageForm.file) { alert("Select an image first"); return; }
+//     setUploading(true);
+//     const formData = new FormData();
+//     formData.append("image", imageForm.file);
+//     formData.append("image_type", imageForm.image_type);
+//     formData.append("image_name", imageForm.file.name);
+//     axios.post(`${BASE_URL}/api/images/upload`, formData, {
+//       headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+//     }).then(() => {
+//       alert("✅ Image uploaded");
+//       setImageForm({ image_type: "owner", file: null, preview: null });
+//       const el = document.getElementById("imageInput");
+//       if (el) el.value = "";
+//       loadImages();
+//     }).catch(() => alert("❌ Error"))
+//     .finally(() => setUploading(false));
+//   };
+//   const deleteImage = (id) => {
+//     if (!window.confirm("Delete this image?")) return;
+//     axios.delete(`${BASE_URL}/api/images/${id}`, { headers: { Authorization: token } })
+//       .then(() => { alert("✅ Deleted"); loadImages(); })
+//       .catch(() => alert("❌ Error"));
+//   };
+
+//   // ================= INQUIRY HANDLERS =================
+//   const markAsRead = (id) => {
+//     axios.put(`${BASE_URL}/api/inquiry/${id}/read`, {}, { headers: { Authorization: token } })
+//       .then(() => { alert("✅ Marked as read"); loadInquiries(); })
+//       .catch(() => alert("❌ Error"));
+//   };
+
+//   // ================= GALLERY HANDLERS =================
+//   const handleGalleryImageChange = (e) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => setGalleryForm({ ...galleryForm, file, preview: reader.result });
+//       reader.readAsDataURL(file);
+//     }
+//   };
+//   const uploadGalleryImage = () => {
+//     if (!galleryForm.file) { alert("Select an image first"); return; }
+//     setGalleryUploading(true);
+//     const formData = new FormData();
+//     formData.append("image", galleryForm.file);
+//     formData.append("caption", galleryForm.caption);
+//     axios.post(`${BASE_URL}/api/gallery`, formData, {
+//       headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+//     }).then(() => {
+//       alert("✅ Gallery image uploaded");
+//       setGalleryForm({ caption: "", file: null, preview: null });
+//       const el = document.getElementById("galleryInput");
+//       if (el) el.value = "";
+//       loadGalleryImages(1);
+//     }).catch(() => alert("❌ Error"))
+//     .finally(() => setGalleryUploading(false));
+//   };
+//   const deleteGalleryImage = (id) => {
+//     if (!window.confirm("Delete this gallery image?")) return;
+//     axios.delete(`${BASE_URL}/api/gallery/${id}`, { headers: { Authorization: token } })
+//       .then(() => { alert("✅ Deleted"); loadGalleryImages(1); })
+//       .catch(() => alert("❌ Error"));
+//   };
+
+//   // ================= REGISTRATION HANDLERS =================
+//   const deleteRegistration = (id) => {
+//     if (!window.confirm("Are you sure you want to delete this record?")) return;
+//     axios.delete(`${BASE_URL}/api/dashboard/${registrationType}/${id}`, { headers: { Authorization: token } })
+//       .then(() => { setRegistrations(prev => prev.filter(r => r.id !== id)); loadRegSummary(); alert("✅ Deleted"); })
+//       .catch(() => alert("❌ Error"));
+//   };
+//   const filteredRegs = registrations.filter(r => {
+//     if (!regSearch.trim()) return true;
+//     const q = regSearch.toLowerCase();
+//     return r.full_name?.toLowerCase().includes(q) || r.email?.toLowerCase().includes(q) || r.mobile?.includes(q);
+//   });
+
+//   // ================= RENDER =================
+//   return (
+//     <div className="min-h-screen bg-gray-50 flex">
+
+//       {/* ══ SIDEBAR ══ */}
+//       <div className="w-64 min-h-screen bg-gradient-to-b from-teal-700 to-teal-900 flex flex-col fixed left-0 top-0 z-30">
+//         <div className="px-6 py-7 border-b border-teal-600">
+//           <h1 className="text-xl font-bold text-white">⚙️ Admin Panel</h1>
+//           <p className="text-teal-300 text-xs mt-1">Manage Website</p>
+//         </div>
+
+//         <nav className="flex-1 px-3 py-6 space-y-1">
+//           {[
+//             { key: "services",      label: "Services",       icon: "📋" },
+//             { key: "images",        label: "Images",         icon: "🖼️" },
+//             { key: "gallery",       label: "Gallery",        icon: "🎨" },
+//             { key: "blogs",         label: "Blogs",          icon: "✍️" },   // ← NEW
+//             { key: "inquiries",     label: "Inquiries",      icon: "📩" },
+//             { key: "deadlines",     label: "Deadlines",      icon: "⏰" },
+//             { key: "registrations", label: "Registrations",  icon: "📁" },
+//           ].map(tab => (
+//             <button
+//               key={tab.key}
+//               onClick={() => setActiveTab(tab.key)}
+//               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
+//                 activeTab === tab.key
+//                   ? "bg-white text-teal-700 shadow"
+//                   : "text-teal-100 hover:bg-teal-600"
+//               }`}
+//             >
+//               <span className="text-base">{tab.icon}</span>
+//               <span>{tab.label}</span>
+//               {tab.key === "inquiries" && unreadCount > 0 && (
+//                 <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+//                   {unreadCount}
+//                 </span>
+//               )}
+//               {tab.key === "blogs" && blogs.length > 0 && (
+//                 <span className="ml-auto bg-teal-400 text-white text-xs px-2 py-0.5 rounded-full">
+//                   {blogs.length}
+//                 </span>
+//               )}
+//             </button>
+//           ))}
+//         </nav>
+
+//         <div className="px-3 py-5 border-t border-teal-600">
+//           <button
+//             onClick={() => navigate("/")}
+//             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-teal-100 hover:bg-teal-600 transition"
+//           >
+//             <span>🏠</span><span>Back to Home</span>
+//           </button>
+//         </div>
+//       </div>
+
+//       {/* ══ MAIN CONTENT ══ */}
+//       <div className="ml-64 flex-1 flex flex-col min-h-screen">
+
+//         {/* Top Bar */}
+//         <div className="bg-white border-b px-8 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+//           <h2 className="text-lg font-bold text-gray-700 capitalize">
+//             {activeTab.replace("-", " ")}
+//           </h2>
+//           <button onClick={() => setActiveTab("inquiries")} className="relative text-2xl hover:scale-110 transition">
+//             🔔
+//             {unreadCount > 0 && (
+//               <span className="absolute -top-1 -right-1 bg-red-500 text-xs px-2 rounded-full text-white font-bold">
+//                 {unreadCount}
+//               </span>
+//             )}
+//           </button>
+//         </div>
+
+//         <div className="p-8">
+
+//           {/* ═══════════════ BLOGS TAB ═══════════════ */}
+//           {activeTab === "blogs" && (
+//             <>
+//               {/* Add / Edit Form */}
+//               <div className="bg-white p-6 rounded-xl shadow mb-8">
+//                 <h2 className="font-bold mb-4 text-lg text-gray-800">
+//                   {editingBlogId ? "✏️ Edit Blog" : "✍️ Add New Blog"}
+//                 </h2>
+
+//                 <div className="grid md:grid-cols-2 gap-4 mb-3">
+//                   <input
+//                     className="border p-2 rounded-lg w-full focus:outline-none focus:border-teal-400"
+//                     placeholder="Blog Title *"
+//                     value={blogForm.title}
+//                     onChange={e => setBlogForm({ ...blogForm, title: e.target.value })}
+//                   />
+//                   <input
+//                     className="border p-2 rounded-lg w-full focus:outline-none focus:border-teal-400"
+//                     placeholder="Author (default: Admin)"
+//                     value={blogForm.author}
+//                     onChange={e => setBlogForm({ ...blogForm, author: e.target.value })}
+//                   />
+//                 </div>
+
+//                 <select
+//                   className="border p-2 rounded-lg w-full mb-3 focus:outline-none focus:border-teal-400"
+//                   value={blogForm.category}
+//                   onChange={e => setBlogForm({ ...blogForm, category: e.target.value })}
+//                 >
+//                   {BLOG_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+//                 </select>
+
+//                 <textarea
+//                   className="border p-2 rounded-lg w-full mb-3 h-20 focus:outline-none focus:border-teal-400 resize-none"
+//                   placeholder="Short Summary * (shown on home page card)"
+//                   value={blogForm.summary}
+//                   onChange={e => setBlogForm({ ...blogForm, summary: e.target.value })}
+//                 />
+
+//                 <textarea
+//                   className="border p-2 rounded-lg w-full mb-3 h-40 focus:outline-none focus:border-teal-400 resize-y"
+//                   placeholder="Full Content * (shown on blog detail page)"
+//                   value={blogForm.content}
+//                   onChange={e => setBlogForm({ ...blogForm, content: e.target.value })}
+//                 />
+
+//                 <div className="grid md:grid-cols-2 gap-4 mb-4">
+//                   <div>
+//                     <label className="text-sm text-gray-600 mb-1 block font-medium">
+//                       Blog Cover Image {editingBlogId && "(leave empty to keep existing)"}
+//                     </label>
+//                     <input
+//                       id="blogImageInput"
+//                       type="file"
+//                       accept="image/*"
+//                       onChange={handleBlogImageChange}
+//                       className="w-full text-sm"
+//                     />
+//                   </div>
+//                   <div className="border-2 border-dashed border-gray-200 flex items-center justify-center h-32 rounded-lg bg-gray-50">
+//                     {blogImagePreview ? (
+//                       <img src={blogImagePreview} alt="Preview" className="h-full w-full rounded-lg object-cover" />
+//                     ) : (
+//                       <p className="text-gray-400 text-sm text-center">Image Preview</p>
+//                     )}
+//                   </div>
+//                 </div>
+
+//                 <div className="flex gap-3">
+//                   <button
+//                     onClick={saveBlog}
+//                     disabled={blogUploading}
+//                     className="bg-teal-500 text-white px-8 py-2.5 rounded-lg font-semibold hover:bg-teal-600 disabled:opacity-50 transition"
+//                   >
+//                     {blogUploading ? "Saving..." : editingBlogId ? "Update Blog" : "Publish Blog"}
+//                   </button>
+//                   {editingBlogId && (
+//                     <button
+//                       onClick={resetBlogForm}
+//                       className="bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-300 transition"
+//                     >
+//                       Cancel
+//                     </button>
+//                   )}
+//                 </div>
+//               </div>
+
+//               {/* Blogs Table */}
+//               <div className="bg-white rounded-xl shadow overflow-x-auto">
+//                 <div className="px-6 py-4 border-b flex items-center justify-between">
+//                   <h3 className="font-bold text-gray-700">Published Blogs</h3>
+//                   <span className="text-sm text-gray-400">{blogs.length} article(s)</span>
+//                 </div>
+//                 <table className="w-full text-sm">
+//                   <thead className="bg-gray-50">
+//                     <tr>
+//                       {["#", "Image", "Title", "Category", "Author", "Summary", "Date", "Actions"].map(h => (
+//                         <th key={h} className="p-3 text-left whitespace-nowrap font-semibold text-gray-600">{h}</th>
+//                       ))}
+//                     </tr>
+//                   </thead>
+//                   <tbody>
+//                     {blogs.map((blog, i) => (
+//                       <tr key={blog.id} className="border-t hover:bg-gray-50 transition">
+//                         <td className="p-3 text-gray-500">{i + 1}</td>
+//                         <td className="p-3">
+//                           {blog.image_path ? (
+//                             <img
+//                               src={`${BASE_URL}/api/blogs/${blog.id}/image`}
+//                               alt="Blog"
+//                               className="h-12 w-20 object-cover rounded-lg"
+//                             />
+//                           ) : (
+//                             <div className="h-12 w-20 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">
+//                               No img
+//                             </div>
+//                           )}
+//                         </td>
+//                         <td className="p-3 font-medium">
+//                           <p className="truncate w-40 text-gray-800">{blog.title}</p>
+//                         </td>
+//                         <td className="p-3">
+//                           <span className="bg-teal-50 text-teal-700 border border-teal-200 rounded-full px-2.5 py-0.5 text-xs font-semibold">
+//                             {blog.category}
+//                           </span>
+//                         </td>
+//                         <td className="p-3 text-gray-600">{blog.author}</td>
+//                         <td className="p-3">
+//                           <p className="truncate w-48 text-gray-500">{blog.summary}</p>
+//                         </td>
+//                         <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
+//                           {new Date(blog.created_at).toLocaleDateString("en-IN")}
+//                         </td>
+//                         <td className="p-3">
+//                           <div className="flex gap-2">
+//                             <button
+//                               onClick={() => {
+//                                 setBlogForm({
+//                                   title: blog.title,
+//                                   summary: blog.summary,
+//                                   content: blog.content || "",
+//                                   author: blog.author,
+//                                   category: blog.category,
+//                                 });
+//                                 setEditingBlogId(blog.id);
+//                                 setBlogImagePreview(null);
+//                                 setBlogImageFile(null);
+//                                 window.scrollTo({ top: 0, behavior: "smooth" });
+//                               }}
+//                               className="bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-blue-600 transition font-medium"
+//                             >
+//                               Edit
+//                             </button>
+//                             <button
+//                               onClick={() => deleteBlog(blog.id)}
+//                               className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-red-600 transition font-medium"
+//                             >
+//                               Delete
+//                             </button>
+//                           </div>
+//                         </td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </table>
+//                 {blogs.length === 0 && (
+//                   <div className="p-12 text-center text-gray-400">
+//                     <p className="text-4xl mb-3">📝</p>
+//                     <p className="font-medium">No blogs published yet</p>
+//                     <p className="text-sm mt-1">Use the form above to publish your first article</p>
+//                   </div>
+//                 )}
+//               </div>
+//             </>
+//           )}
+
+//           {/* ═══════════════ GALLERY TAB ═══════════════ */}
+//           {activeTab === "gallery" && (
+//             <>
+//               <div className="bg-white p-6 rounded shadow mb-8 grid md:grid-cols-2 gap-6">
+//                 <div>
+//                   <h2 className="font-bold mb-3">Upload Gallery Image</h2>
+//                   <textarea
+//                     className="w-full border p-2 mb-3 h-20 rounded"
+//                     placeholder="Image caption (optional)"
+//                     value={galleryForm.caption}
+//                     onChange={e => setGalleryForm({ ...galleryForm, caption: e.target.value })}
+//                   />
+//                   <input id="galleryInput" type="file" accept="image/*" onChange={handleGalleryImageChange} className="mb-2 w-full" />
+//                   <button
+//                     onClick={uploadGalleryImage}
+//                     disabled={galleryUploading}
+//                     className="bg-teal-500 text-white w-full py-2 rounded font-semibold hover:bg-teal-600 disabled:opacity-50"
+//                   >
+//                     {galleryUploading ? "Uploading..." : "Upload to Gallery"}
+//                   </button>
+//                 </div>
+//                 <div className="border-2 flex items-center justify-center h-48 rounded bg-gray-50">
+//                   {galleryForm.preview
+//                     ? <img src={galleryForm.preview} alt="Preview" className="h-full rounded" />
+//                     : <p className="text-gray-400 text-center">Image Preview</p>}
+//                 </div>
+//               </div>
+//               <div className="bg-white rounded shadow overflow-x-auto">
+//                 <table className="w-full">
+//                   <thead className="bg-gray-100">
+//                     <tr>
+//                       {["ID","Image","Caption","Uploaded","Action"].map(h => (
+//                         <th key={h} className="p-3 text-left">{h}</th>
+//                       ))}
+//                     </tr>
+//                   </thead>
+//                   <tbody>
+//                     {galleryImages.map(img => (
+//                       <tr key={img.id} className="border-t hover:bg-gray-50">
+//                         <td className="p-3">{img.id}</td>
+//                         <td className="p-3">
+//                           <img src={`${BASE_URL}/${img.image_path}`} alt="Gallery" className="h-12 w-12 object-cover rounded" />
+//                         </td>
+//                         <td className="p-3 max-w-xs truncate">{img.caption || "—"}</td>
+//                         <td className="p-3 text-gray-500 text-sm">{new Date(img.uploaded_at).toLocaleDateString("en-IN")}</td>
+//                         <td className="p-3">
+//                           <button onClick={() => deleteGalleryImage(img.id)} className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+//                         </td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </table>
+//                 {galleryImages.length === 0 && <div className="p-8 text-center text-gray-400">No gallery images yet</div>}
+//               </div>
+//               {galleryPagination.pages > 1 && (
+//                 <div className="flex justify-center gap-2 mt-4">
+//                   {Array.from({ length: galleryPagination.pages }, (_, i) => i + 1).map(page => (
+//                     <button
+//                       key={page}
+//                       onClick={() => loadGalleryImages(page)}
+//                       className={`px-4 py-2 rounded ${galleryPage === page ? "bg-teal-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+//                     >
+//                       {page}
+//                     </button>
+//                   ))}
+//                 </div>
+//               )}
+//             </>
+//           )}
+
+//           {/* ═══════════════ DEADLINES TAB ═══════════════ */}
+//           {activeTab === "deadlines" && (
+//             <div className="bg-white p-6 rounded shadow">
+//               <h2 className="font-bold mb-4 text-lg">Manage Tax Deadlines</h2>
+//               <select className="border p-2 w-full mb-2 rounded" value={deadlineForm.category} onChange={e => setDeadlineForm({ ...deadlineForm, category: e.target.value })}>
+//                 <option value="ITR">Income Tax</option>
+//                 <option value="GST">GST</option>
+//               </select>
+//               <input className="border p-2 w-full mb-2 rounded" placeholder="Name (Ex: GSTR-1, Salaried)" value={deadlineForm.name} onChange={e => setDeadlineForm({ ...deadlineForm, name: e.target.value })} />
+//               <input className="border p-2 w-full mb-2 rounded" placeholder="Form / Type" value={deadlineForm.form_type} onChange={e => setDeadlineForm({ ...deadlineForm, form_type: e.target.value })} />
+//               <select className="border p-2 w-full mb-2 rounded" value={deadlineForm.frequency} onChange={e => setDeadlineForm({ ...deadlineForm, frequency: e.target.value })}>
+//                 <option value="yearly">Yearly</option>
+//                 <option value="monthly">Monthly</option>
+//               </select>
+//               <input type="number" className="border p-2 w-full mb-2 rounded" placeholder="Rule Day (e.g. 31 or 20)" value={deadlineForm.rule_day} onChange={e => setDeadlineForm({ ...deadlineForm, rule_day: e.target.value })} />
+//               {deadlineForm.frequency === "yearly" && (
+//                 <input type="number" className="border p-2 w-full mb-2 rounded" placeholder="Rule Month (1-12)" value={deadlineForm.rule_month} onChange={e => setDeadlineForm({ ...deadlineForm, rule_month: e.target.value })} />
+//               )}
+//               <label className="flex items-center gap-2 mb-2">
+//                 <input type="checkbox" checked={deadlineForm.is_auto} onChange={e => setDeadlineForm({ ...deadlineForm, is_auto: e.target.checked })} />
+//                 Auto Mode
+//               </label>
+//               {!deadlineForm.is_auto && (
+//                 <input type="date" className="border p-2 w-full mb-3 rounded" value={deadlineForm.manual_due_date} onChange={e => setDeadlineForm({ ...deadlineForm, manual_due_date: e.target.value })} />
+//               )}
+//               <button onClick={saveDeadline} className="bg-teal-500 text-white w-full py-2 rounded font-semibold hover:bg-teal-600">
+//                 {editingId ? "Update Deadline" : "Save Deadline"}
+//               </button>
+//               <div className="mt-6 space-y-2">
+//                 {deadlines.map(d => (
+//                   <div key={d.id} className="flex justify-between items-center border p-3 rounded hover:bg-gray-50">
+//                     <div>
+//                       <b>{d.name}</b> <span className="text-gray-500">({d.category})</span>
+//                       <span className="ml-2 text-sm text-gray-600">📅 {d.due_date}</span>
+//                     </div>
+//                     <div className="space-x-2">
+//                       <button
+//                         onClick={() => {
+//                           setDeadlineForm({
+//                             category: d.category, name: d.name, form_type: d.form_type,
+//                             frequency: d.frequency, rule_day: d.rule_day, rule_month: d.rule_month,
+//                             is_auto: d.is_auto, manual_due_date: d.manual_due_date ? d.manual_due_date.split("T")[0] : ""
+//                           });
+//                           setEditingId(d.id);
+//                         }}
+//                         className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+//                       >Edit</button>
+//                       <button onClick={() => deleteDeadline(d.id)} className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Delete</button>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//           )}
+
+//           {/* ═══════════════ SERVICES TAB ═══════════════ */}
+//           {activeTab === "services" && (
+//             <>
+//               <div className="bg-white p-6 rounded shadow mb-8">
+//                 <h2 className="font-bold mb-4">Add Service</h2>
+//                 <input className="w-full border p-2 mb-2 rounded" placeholder="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
+//                 <input className="w-full border p-2 mb-2 rounded" placeholder="Short Description" value={form.short_description} onChange={e => setForm({ ...form, short_description: e.target.value })} />
+//                 <textarea className="w-full border p-2 mb-2 h-24 rounded" placeholder="Full Description" value={form.full_description} onChange={e => setForm({ ...form, full_description: e.target.value })} />
+//                 <input type="file" accept="image/*" onChange={handleServiceImageChange} className="mb-2" />
+//                 {serviceImagePreview && <img src={serviceImagePreview} alt="Preview" className="h-32 mt-2 rounded" />}
+//                 <button onClick={addService} className="bg-teal-500 text-white w-full py-2 mt-3 rounded font-semibold hover:bg-teal-600">Add Service</button>
+//               </div>
+//               <div className="bg-white rounded shadow overflow-x-auto">
+//                 <table className="w-full">
+//                   <thead className="bg-gray-100">
+//                     <tr>{["ID","Title","Short Desc","Action"].map(h => <th key={h} className="p-3 text-left">{h}</th>)}</tr>
+//                   </thead>
+//                   <tbody>
+//                     {services.map(s => (
+//                       <tr key={s.id} className="border-t hover:bg-gray-50">
+//                         <td className="p-3">{s.id}</td>
+//                         <td className="p-3 font-medium">{s.title}</td>
+//                         <td className="p-3">{s.short_description}</td>
+//                         <td className="p-3">
+//                           <button onClick={() => deleteService(s.id)} className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+//                         </td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </table>
+//               </div>
+//             </>
+//           )}
+
+//           {/* ═══════════════ IMAGES TAB ═══════════════ */}
+//           {activeTab === "images" && (
+//             <>
+//               <div className="bg-white p-6 rounded shadow mb-8 grid md:grid-cols-2 gap-6">
+//                 <div>
+//                   <h2 className="font-bold mb-3">Upload Image</h2>
+//                   <select className="w-full border p-2 mb-3 rounded" value={imageForm.image_type} onChange={e => setImageForm({ ...imageForm, image_type: e.target.value })}>
+//                     <option value="logo">Logo</option>
+//                     <option value="owner">Owner</option>
+//                     <option value="clients_logo">Clients</option>
+//                     <option value="hero">Hero</option>
+//                   </select>
+//                   <input id="imageInput" type="file" accept="image/*" onChange={handleImageChange} className="mb-2" />
+//                   <button onClick={uploadImage} disabled={uploading} className="bg-teal-500 text-white w-full py-2 mt-3 rounded font-semibold hover:bg-teal-600 disabled:opacity-50">
+//                     {uploading ? "Uploading..." : "Upload"}
+//                   </button>
+//                 </div>
+//                 <div className="border-2 flex items-center justify-center h-48 rounded bg-gray-50">
+//                   {imageForm.preview ? <img src={imageForm.preview} alt="Preview" className="h-full rounded" /> : <p className="text-gray-400 text-center">Image Preview</p>}
+//                 </div>
+//               </div>
+//               <div className="bg-white rounded shadow overflow-x-auto">
+//                 <table className="w-full">
+//                   <thead className="bg-gray-100">
+//                     <tr>{["ID","Type","Name","Preview","Action"].map(h => <th key={h} className="p-3 text-left">{h}</th>)}</tr>
+//                   </thead>
+//                   <tbody>
+//                     {images.map(img => (
+//                       <tr key={img.id} className="border-t hover:bg-gray-50">
+//                         <td className="p-3">{img.id}</td>
+//                         <td className="p-3">{img.image_type}</td>
+//                         <td className="p-3">{img.image_name}</td>
+//                         <td className="p-3">
+//                           <a href={`${BASE_URL}/uploads/${img.image_name}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">View</a>
+//                         </td>
+//                         <td className="p-3">
+//                           <button onClick={() => deleteImage(img.id)} className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+//                         </td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </table>
+//               </div>
+//             </>
+//           )}
+
+//           {/* ═══════════════ INQUIRIES TAB ═══════════════ */}
+//           {activeTab === "inquiries" && (
+//             <div className="bg-white rounded shadow overflow-x-auto">
+//               <table className="w-full">
+//                 <thead className="bg-gray-100">
+//                   <tr>{["ID","Name","Email","Phone","Message","Status"].map(h => <th key={h} className="p-3 text-left">{h}</th>)}</tr>
+//                 </thead>
+//                 <tbody>
+//                   {inquiries.map(i => (
+//                     <tr key={i.id} className={`border-t hover:bg-gray-50 ${i.is_read === 0 ? "bg-yellow-50" : ""}`}>
+//                       <td className="p-3">{i.id}</td>
+//                       <td className="p-3 font-medium">
+//                         {i.name}
+//                         {i.visit_count > 1 && (
+//                           <span className="ml-2 bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full font-semibold">🔁 Returning ({i.visit_count}x)</span>
+//                         )}
+//                       </td>
+//                       <td className="p-3">{i.email}</td>
+//                       <td className="p-3">{i.phone}</td>
+//                       <td className="p-3 max-w-xs truncate">{i.message}</td>
+//                       <td className="p-3">
+//                         {i.is_read === 0
+//                           ? <button onClick={() => markAsRead(i.id)} className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">Mark Read</button>
+//                           : <span className="text-green-600 font-semibold">✅ Read</span>}
+//                       </td>
+//                     </tr>
+//                   ))}
+//                 </tbody>
+//               </table>
+//               {inquiries.length === 0 && <div className="p-8 text-center text-gray-400">No inquiries found</div>}
+//             </div>
+//           )}
+
+//           {/* ═══════════════ REGISTRATIONS TAB ═══════════════ */}
+//           {activeTab === "registrations" && (
+//             <div>
+//               <div className="grid grid-cols-3 gap-4 mb-6">
+//                 {[
+//                   { key: "income-tax", label: "Income Tax", count: regSummary.income_tax },
+//                   { key: "gst",        label: "GST",        count: regSummary.gst },
+//                   { key: "udyam",      label: "Udyam",      count: regSummary.udyam },
+//                 ].map(card => (
+//                   <button
+//                     key={card.key}
+//                     onClick={() => setRegistrationType(card.key)}
+//                     className={`bg-white rounded-lg shadow p-5 text-left border-l-4 transition hover:-translate-y-0.5 ${registrationType === card.key ? "border-teal-500" : "border-gray-200"}`}
+//                   >
+//                     <div className="text-3xl font-bold text-teal-600">{card.count}</div>
+//                     <div className="text-sm text-gray-500 mt-1">📁 {card.label} Registrations</div>
+//                   </button>
+//                 ))}
+//               </div>
+//               <div className="flex gap-3 mb-4">
+//                 {[{ key: "income-tax", label: "📑 Income Tax" }, { key: "gst", label: "🏪 GST" }, { key: "udyam", label: "🏭 Udyam" }].map(t => (
+//                   <button
+//                     key={t.key}
+//                     onClick={() => setRegistrationType(t.key)}
+//                     className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${registrationType === t.key ? "bg-teal-500 text-white" : "bg-white text-gray-500 border border-gray-200 hover:border-teal-300"}`}
+//                   >
+//                     {t.label}
+//                   </button>
+//                 ))}
+//               </div>
+//               <div className="flex justify-between items-center mb-4">
+//                 <input
+//                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-64 focus:outline-none focus:border-teal-400"
+//                   placeholder="🔍 Search by name, email, mobile..."
+//                   value={regSearch}
+//                   onChange={e => setRegSearch(e.target.value)}
+//                 />
+//                 <span className="text-sm text-gray-500">{filteredRegs.length} record(s)</span>
+//               </div>
+//               <div className="bg-white rounded-lg shadow overflow-x-auto">
+//                 {regLoading ? (
+//                   <div className="p-12 text-center text-gray-400">⏳ Loading...</div>
+//                 ) : filteredRegs.length === 0 ? (
+//                   <div className="p-12 text-center text-gray-400">No records found</div>
+//                 ) : (
+//                   <table className="w-full text-sm">
+//                     <thead className="bg-gray-100 sticky top-0">
+//                       {registrationType === "income-tax" && (
+//                         <tr>
+//                           {["#","Name","Email","Mobile","PAN","Aadhaar","Salary","House Prop.","Pension","Agri.","Cap. Gain","Int. Savings","Int. Deposit","Int. Refund","Enh. Comp","Other Int.","PAN Photo","Aadhaar Front","Aadhaar Back","Date","Action"].map(h => (
+//                             <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">{h}</th>
+//                           ))}
+//                         </tr>
+//                       )}
+//                       {registrationType === "gst" && (
+//                         <tr>
+//                           {["#","Name","Email","Mobile","PAN","Aadhaar","PAN Photo","Aadhaar","Proprietor","Address Proof","Shop Act","Udyam Cert","Shop Photo","Bank Proof","Signature","Date","Action"].map(h => (
+//                             <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">{h}</th>
+//                           ))}
+//                         </tr>
+//                       )}
+//                       {registrationType === "udyam" && (
+//                         <tr>
+//                           {["#","Name","Email","Mobile","PAN","Aadhaar","PAN Photo","Aadhaar","Proprietor","Address Proof","Shop Act","Bank Proof","Signature","Date","Action"].map(h => (
+//                             <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">{h}</th>
+//                           ))}
+//                         </tr>
+//                       )}
+//                     </thead>
+//                     <tbody>
+//                       {filteredRegs.map((row, i) => (
+//                         <tr key={row.id} className="border-t hover:bg-gray-50">
+//                           {registrationType === "income-tax" && (
+//                             <>
+//                               <td className="p-3">{i+1}</td>
+//                               <td className="p-3 font-medium whitespace-nowrap">{row.full_name}</td>
+//                               <td className="p-3 whitespace-nowrap">{row.email}</td>
+//                               <td className="p-3">{row.mobile}</td>
+//                               <td className="p-3">{row.pan_number}</td>
+//                               <td className="p-3">{row.aadhaar_number}</td>
+//                               <td className="p-3">₹{row.salary_income||0}</td>
+//                               <td className="p-3">₹{row.house_property_income||0}</td>
+//                               <td className="p-3">₹{row.family_pension_income||0}</td>
+//                               <td className="p-3">₹{row.agricultural_income||0}</td>
+//                               <td className="p-3">₹{row.capital_gain_112a||0}</td>
+//                               <td className="p-3">₹{row.interest_savings||0}</td>
+//                               <td className="p-3">₹{row.interest_deposits||0}</td>
+//                               <td className="p-3">₹{row.interest_refund||0}</td>
+//                               <td className="p-3">₹{row.interest_enhanced_comp||0}</td>
+//                               <td className="p-3">₹{row.other_interest_income||0}</td>
+//                               <td className="p-3"><FileBtn filePath={row.pan_photo} label="PAN" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.aadhaar_photo} label="Front" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.aadhaar_back_photo} label="Back" /></td>
+//                               <td className="p-3 text-gray-400 text-xs whitespace-nowrap">{new Date(row.created_at).toLocaleDateString("en-IN")}</td>
+//                               <td className="p-3"><button onClick={() => deleteRegistration(row.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition">Delete</button></td>
+//                             </>
+//                           )}
+//                           {registrationType === "gst" && (
+//                             <>
+//                               <td className="p-3">{i+1}</td>
+//                               <td className="p-3 font-medium whitespace-nowrap">{row.full_name}</td>
+//                               <td className="p-3 whitespace-nowrap">{row.email}</td>
+//                               <td className="p-3">{row.mobile}</td>
+//                               <td className="p-3">{row.pan_number}</td>
+//                               <td className="p-3">{row.aadhaar_number}</td>
+//                               <td className="p-3"><FileBtn filePath={row.pan_photo} label="PAN" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.aadhaar_photo} label="Aadhaar" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.proprietor_photo} label="Proprietor" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.business_address_proof} label="Address" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.shop_act_license} label="Shop Act" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.udyam_certificate} label="Udyam" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.shop_photo} label="Shop" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.bank_proof} label="Bank" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.signature} label="Sign" /></td>
+//                               <td className="p-3 text-gray-400 text-xs whitespace-nowrap">{new Date(row.created_at).toLocaleDateString("en-IN")}</td>
+//                               <td className="p-3"><button onClick={() => deleteRegistration(row.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition">Delete</button></td>
+//                             </>
+//                           )}
+//                           {registrationType === "udyam" && (
+//                             <>
+//                               <td className="p-3">{i+1}</td>
+//                               <td className="p-3 font-medium whitespace-nowrap">{row.full_name}</td>
+//                               <td className="p-3 whitespace-nowrap">{row.email}</td>
+//                               <td className="p-3">{row.mobile}</td>
+//                               <td className="p-3">{row.pan_number}</td>
+//                               <td className="p-3">{row.aadhaar_number}</td>
+//                               <td className="p-3"><FileBtn filePath={row.pan_photo} label="PAN" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.aadhaar_photo} label="Aadhaar" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.proprietor_photo} label="Proprietor" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.business_address_proof} label="Address" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.shop_act_license} label="Shop Act" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.bank_proof} label="Bank" /></td>
+//                               <td className="p-3"><FileBtn filePath={row.signature} label="Sign" /></td>
+//                               <td className="p-3 text-gray-400 text-xs whitespace-nowrap">{new Date(row.created_at).toLocaleDateString("en-IN")}</td>
+//                               <td className="p-3"><button onClick={() => deleteRegistration(row.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition">Delete</button></td>
+//                             </>
+//                           )}
+//                         </tr>
+//                       ))}
+//                     </tbody>
+//                   </table>
+//                 )}
+//               </div>
+//             </div>
+//           )}
+
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -1493,6 +3740,8 @@ const FileBtn = ({ filePath, label }) => {
     </button>
   );
 };
+
+const BLOG_CATEGORIES = ["General", "GST", "Income Tax", "Business", "Compliance"];
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -1518,24 +3767,28 @@ export default function Dashboard() {
   const [imageForm, setImageForm] = useState({ image_type: "owner", file: null, preview: null });
 
   const [deadlineForm, setDeadlineForm] = useState({
-    category: "ITR",
-    name: "",
-    form_type: "",
-    frequency: "yearly",
-    rule_day: "",
-    rule_month: "",
-    is_auto: true,
-    manual_due_date: ""
+    category: "ITR", name: "", form_type: "", frequency: "yearly",
+    rule_day: "", rule_month: "", is_auto: true, manual_due_date: ""
   });
   const [editingId, setEditingId] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  // ================= GALLERY STATES =================
+  // ── GALLERY STATES ──
   const [galleryImages, setGalleryImages] = useState([]);
   const [galleryForm, setGalleryForm] = useState({ caption: "", file: null, preview: null });
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [galleryPage, setGalleryPage] = useState(1);
   const [galleryPagination, setGalleryPagination] = useState({ total: 0, pages: 1, limit: 10 });
+
+  // ── BLOG STATES ──
+  const [blogs, setBlogs] = useState([]);
+  const [blogForm, setBlogForm] = useState({
+    title: "", summary: "", content: "", author: "Admin", category: "General"
+  });
+  const [blogImageFile, setBlogImageFile] = useState(null);
+  const [blogImagePreview, setBlogImagePreview] = useState(null);
+  const [blogUploading, setBlogUploading] = useState(false);
+  const [editingBlogId, setEditingBlogId] = useState(null);
 
   // ================= AUTH CHECK =================
   useEffect(() => {
@@ -1544,151 +3797,153 @@ export default function Dashboard() {
 
   // ================= LOAD DATA =================
   const loadServices = () => {
-    axios
-      .get(`${BASE_URL}/api/admin/services`, { headers: { Authorization: token } })
+    axios.get(`${BASE_URL}/api/admin/services`, { headers: { Authorization: token } })
       .then(res => setServices(res.data))
-      .catch(err => console.error("❌ Error loading services:", err.message));
+      .catch(err => console.error("❌ Services:", err.message));
   };
-
   const loadImages = () => {
-    axios
-      .get(`${BASE_URL}/api/images/admin/all`, { headers: { Authorization: token } })
+    axios.get(`${BASE_URL}/api/images/admin/all`, { headers: { Authorization: token } })
       .then(res => setImages(res.data))
-      .catch(err => console.error("❌ Error loading images:", err.message));
+      .catch(err => console.error("❌ Images:", err.message));
   };
-
   const loadInquiries = () => {
-    axios
-      .get(`${BASE_URL}/api/inquiry`, { headers: { Authorization: token } })
+    axios.get(`${BASE_URL}/api/inquiry`, { headers: { Authorization: token } })
       .then(res => {
         setInquiries(res.data.data || res.data);
         const unread = (res.data.data || res.data).filter(i => i.is_read === 0).length;
         setUnreadCount(unread);
       })
-      .catch(err => console.error("❌ Error loading inquiries:", err.message));
+      .catch(err => console.error("❌ Inquiries:", err.message));
   };
-
   const loadDeadlines = () => {
-    axios
-      .get(`${BASE_URL}/api/tax-deadlines`)
+    axios.get(`${BASE_URL}/api/tax-deadlines`)
       .then(res => setDeadlines(res.data.data || res.data))
-      .catch(err => console.error("❌ Error loading deadlines:", err.message));
+      .catch(err => console.error("❌ Deadlines:", err.message));
   };
-
   const loadRegSummary = () => {
-    axios
-      .get(`${BASE_URL}/api/dashboard/summary`)
+    axios.get(`${BASE_URL}/api/dashboard/summary`)
       .then(res => setRegSummary(res.data))
-      .catch(err => console.error("❌ Error loading summary:", err.message));
+      .catch(err => console.error("❌ Summary:", err.message));
   };
-
   const loadGalleryImages = (page = 1) => {
     const offset = (page - 1) * galleryPagination.limit;
-    axios
-      .get(`${BASE_URL}/api/gallery`, {
-        params: { limit: 10, offset },
-        headers: { Authorization: token }
-      })
+    axios.get(`${BASE_URL}/api/gallery`, {
+      params: { limit: 10, offset }, headers: { Authorization: token }
+    })
       .then(res => {
         setGalleryImages(res.data.data);
         setGalleryPagination(res.data.pagination);
         setGalleryPage(page);
       })
-      .catch(err => console.error("❌ Error loading gallery:", err.message));
+      .catch(err => console.error("❌ Gallery:", err.message));
   };
 
-  // Load all data on mount
+  // ── BLOG LOAD ──
+  const loadBlogs = () => {
+    axios.get(`${BASE_URL}/api/blogs`)
+      .then(res => setBlogs(res.data))
+      .catch(err => console.error("❌ Blogs:", err.message));
+  };
+
   useEffect(() => {
     if (token) {
-      loadServices();
-      loadImages();
-      loadInquiries();
-      loadDeadlines();
-      loadRegSummary();
-      loadGalleryImages();
+      loadServices(); loadImages(); loadInquiries();
+      loadDeadlines(); loadRegSummary(); loadGalleryImages(); loadBlogs();
     }
   }, [token]);
 
-  // Load registrations when tab or type changes
   useEffect(() => {
     if (activeTab !== "registrations") return;
     setRegLoading(true);
     setRegSearch("");
-    axios
-      .get(`${BASE_URL}/api/dashboard/${registrationType}`)
-      .then(res => {
-        setRegistrations(res.data.data || res.data);
-        setRegLoading(false);
-      })
-      .catch(err => {
-        console.error("❌ Error loading registrations:", err.message);
-        setRegLoading(false);
-      });
+    axios.get(`${BASE_URL}/api/dashboard/${registrationType}`)
+      .then(res => { setRegistrations(res.data.data || res.data); setRegLoading(false); })
+      .catch(err => { console.error("❌ Registrations:", err.message); setRegLoading(false); });
   }, [registrationType, activeTab]);
 
-  // ================= DEADLINES HANDLERS =================
-  const saveDeadline = () => {
-    if (!deadlineForm.name || !deadlineForm.rule_day) {
-      alert("Please fill required fields");
-      return;
+  // ================= BLOG HANDLERS =================
+  const handleBlogImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => { setBlogImageFile(file); setBlogImagePreview(reader.result); };
+      reader.readAsDataURL(file);
     }
-    if (deadlineForm.frequency === "yearly" && !deadlineForm.rule_month) {
-      alert("Please enter rule month");
-      return;
-    }
-    if (!deadlineForm.is_auto && !deadlineForm.manual_due_date) {
-      alert("Please select manual due date");
-      return;
-    }
+  };
 
+  const saveBlog = () => {
+    if (!blogForm.title || !blogForm.summary || !blogForm.content) {
+      alert("Please fill Title, Summary, and Content");
+      return;
+    }
+    setBlogUploading(true);
+    const formData = new FormData();
+    formData.append("title", blogForm.title);
+    formData.append("summary", blogForm.summary);
+    formData.append("content", blogForm.content);
+    formData.append("author", blogForm.author || "Admin");
+    formData.append("category", blogForm.category || "General");
+    if (blogImageFile) formData.append("image", blogImageFile);
+
+    const request = editingBlogId
+      ? axios.put(`${BASE_URL}/api/blogs/${editingBlogId}`, formData, {
+          headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+        })
+      : axios.post(`${BASE_URL}/api/blogs`, formData, {
+          headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+        });
+
+    request
+      .then(() => {
+        alert(editingBlogId ? "✅ Blog updated" : "✅ Blog published");
+        resetBlogForm();
+      })
+      .catch(() => alert("❌ Error saving blog"))
+      .finally(() => setBlogUploading(false));
+  };
+
+  const deleteBlog = (id) => {
+    if (!window.confirm("Delete this blog?")) return;
+    axios.delete(`${BASE_URL}/api/blogs/${id}`, { headers: { Authorization: token } })
+      .then(() => { alert("✅ Blog deleted"); loadBlogs(); })
+      .catch(() => alert("❌ Error deleting blog"));
+  };
+
+  const resetBlogForm = () => {
+    setBlogForm({ title: "", summary: "", content: "", author: "Admin", category: "General" });
+    setBlogImageFile(null);
+    setBlogImagePreview(null);
+    setEditingBlogId(null);
+    const input = document.getElementById("blogImageInput");
+    if (input) input.value = "";
+    loadBlogs();
+  };
+
+  // ================= DEADLINE HANDLERS =================
+  const saveDeadline = () => {
+    if (!deadlineForm.name || !deadlineForm.rule_day) { alert("Please fill required fields"); return; }
+    if (deadlineForm.frequency === "yearly" && !deadlineForm.rule_month) { alert("Please enter rule month"); return; }
+    if (!deadlineForm.is_auto && !deadlineForm.manual_due_date) { alert("Please select manual due date"); return; }
     const payload = {
       ...deadlineForm,
       rule_day: Number(deadlineForm.rule_day),
       rule_month: deadlineForm.frequency === "yearly" ? Number(deadlineForm.rule_month) : null,
       manual_due_date: deadlineForm.is_auto ? null : deadlineForm.manual_due_date
     };
-
-    if (editingId) {
-      axios
-        .put(`${BASE_URL}/api/tax-deadlines/${editingId}`, payload, { headers: { Authorization: token } })
-        .then(() => {
-          alert("✅ Deadline updated");
-          resetDeadline();
-        })
-        .catch(() => alert("❌ Error updating deadline"));
-    } else {
-      axios
-        .post(`${BASE_URL}/api/tax-deadlines`, payload, { headers: { Authorization: token } })
-        .then(() => {
-          alert("✅ Deadline saved");
-          resetDeadline();
-        })
-        .catch(() => alert("❌ Error saving deadline"));
-    }
+    const req = editingId
+      ? axios.put(`${BASE_URL}/api/tax-deadlines/${editingId}`, payload, { headers: { Authorization: token } })
+      : axios.post(`${BASE_URL}/api/tax-deadlines`, payload, { headers: { Authorization: token } });
+    req.then(() => { alert(editingId ? "✅ Updated" : "✅ Saved"); resetDeadline(); })
+       .catch(() => alert("❌ Error"));
   };
-
   const deleteDeadline = (id) => {
     if (!window.confirm("Delete this deadline?")) return;
-    axios
-      .delete(`${BASE_URL}/api/tax-deadlines/${id}`, { headers: { Authorization: token } })
-      .then(() => {
-        alert("✅ Deadline deleted");
-        loadDeadlines();
-      })
-      .catch(() => alert("❌ Error deleting deadline"));
+    axios.delete(`${BASE_URL}/api/tax-deadlines/${id}`, { headers: { Authorization: token } })
+      .then(() => { alert("✅ Deleted"); loadDeadlines(); })
+      .catch(() => alert("❌ Error"));
   };
-
   const resetDeadline = () => {
-    setDeadlineForm({
-      category: "ITR",
-      name: "",
-      form_type: "",
-      frequency: "yearly",
-      rule_day: "",
-      rule_month: "",
-      is_auto: true,
-      manual_due_date: ""
-    });
+    setDeadlineForm({ category: "ITR", name: "", form_type: "", frequency: "yearly", rule_day: "", rule_month: "", is_auto: true, manual_due_date: "" });
     setEditingId(null);
     loadDeadlines();
   };
@@ -1698,61 +3953,36 @@ export default function Dashboard() {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setServiceImageFile(file);
-        setServiceImagePreview(reader.result);
-      };
+      reader.onloadend = () => { setServiceImageFile(file); setServiceImagePreview(reader.result); };
       reader.readAsDataURL(file);
     }
   };
-
   const addService = () => {
-    if (!form.title || !form.short_description || !form.full_description) {
-      alert("Please fill all service fields");
-      return;
-    }
-
-    axios
-      .post(`${BASE_URL}/api/admin/services`, form, { headers: { Authorization: token } })
+    if (!form.title || !form.short_description || !form.full_description) { alert("Please fill all service fields"); return; }
+    axios.post(`${BASE_URL}/api/admin/services`, form, { headers: { Authorization: token } })
       .then(res => {
         const serviceId = res.data.id;
         if (serviceImageFile) {
           const formData = new FormData();
           formData.append("image", serviceImageFile);
           formData.append("service_id", serviceId);
-          axios
-            .post(`${BASE_URL}/api/admin/services/upload-image`, formData, {
-              headers: { Authorization: token, "Content-Type": "multipart/form-data" }
-            })
-            .then(() => {
-              alert("✅ Service added with image");
-              resetServiceForm();
-            })
+          axios.post(`${BASE_URL}/api/admin/services/upload-image`, formData, {
+            headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+          }).then(() => { alert("✅ Service added with image"); resetServiceForm(); })
             .catch(() => alert("❌ Error uploading service image"));
-        } else {
-          alert("✅ Service added");
-          resetServiceForm();
-        }
+        } else { alert("✅ Service added"); resetServiceForm(); }
       })
       .catch(() => alert("❌ Error adding service"));
   };
-
   const resetServiceForm = () => {
     setForm({ title: "", short_description: "", full_description: "" });
-    setServiceImageFile(null);
-    setServiceImagePreview(null);
-    loadServices();
+    setServiceImageFile(null); setServiceImagePreview(null); loadServices();
   };
-
   const deleteService = (id) => {
     if (!window.confirm("Delete this service?")) return;
-    axios
-      .delete(`${BASE_URL}/api/admin/services/${id}`, { headers: { Authorization: token } })
-      .then(() => {
-        alert("✅ Service deleted");
-        loadServices();
-      })
-      .catch(() => alert("❌ Error deleting service"));
+    axios.delete(`${BASE_URL}/api/admin/services/${id}`, { headers: { Authorization: token } })
+      .then(() => { alert("✅ Deleted"); loadServices(); })
+      .catch(() => alert("❌ Error"));
   };
 
   // ================= IMAGES HANDLERS =================
@@ -1760,59 +3990,40 @@ export default function Dashboard() {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageForm({ ...imageForm, file, preview: reader.result });
-      };
+      reader.onloadend = () => setImageForm({ ...imageForm, file, preview: reader.result });
       reader.readAsDataURL(file);
     }
   };
-
   const uploadImage = () => {
-    if (!imageForm.file) {
-      alert("Select an image first");
-      return;
-    }
+    if (!imageForm.file) { alert("Select an image first"); return; }
     setUploading(true);
     const formData = new FormData();
     formData.append("image", imageForm.file);
     formData.append("image_type", imageForm.image_type);
     formData.append("image_name", imageForm.file.name);
-
-    axios
-      .post(`${BASE_URL}/api/images/upload`, formData, {
-        headers: { Authorization: token, "Content-Type": "multipart/form-data" }
-      })
-      .then(() => {
-        alert("✅ Image uploaded");
-        setImageForm({ image_type: "owner", file: null, preview: null });
-        const imageInput = document.getElementById("imageInput");
-        if (imageInput) imageInput.value = "";
-        loadImages();
-      })
-      .catch(() => alert("❌ Error uploading image"))
-      .finally(() => setUploading(false));
+    axios.post(`${BASE_URL}/api/images/upload`, formData, {
+      headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+    }).then(() => {
+      alert("✅ Image uploaded");
+      setImageForm({ image_type: "owner", file: null, preview: null });
+      const el = document.getElementById("imageInput");
+      if (el) el.value = "";
+      loadImages();
+    }).catch(() => alert("❌ Error"))
+    .finally(() => setUploading(false));
   };
-
   const deleteImage = (id) => {
     if (!window.confirm("Delete this image?")) return;
-    axios
-      .delete(`${BASE_URL}/api/images/${id}`, { headers: { Authorization: token } })
-      .then(() => {
-        alert("✅ Image deleted");
-        loadImages();
-      })
-      .catch(() => alert("❌ Error deleting image"));
+    axios.delete(`${BASE_URL}/api/images/${id}`, { headers: { Authorization: token } })
+      .then(() => { alert("✅ Deleted"); loadImages(); })
+      .catch(() => alert("❌ Error"));
   };
 
-  // ================= INQUIRIES HANDLERS =================
+  // ================= INQUIRY HANDLERS =================
   const markAsRead = (id) => {
-    axios
-      .put(`${BASE_URL}/api/inquiry/${id}/read`, {}, { headers: { Authorization: token } })
-      .then(() => {
-        alert("✅ Marked as read");
-        loadInquiries();
-      })
-      .catch(() => alert("❌ Error updating inquiry"));
+    axios.put(`${BASE_URL}/api/inquiry/${id}/read`, {}, { headers: { Authorization: token } })
+      .then(() => { alert("✅ Marked as read"); loadInquiries(); })
+      .catch(() => alert("❌ Error"));
   };
 
   // ================= GALLERY HANDLERS =================
@@ -1820,94 +4031,67 @@ export default function Dashboard() {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setGalleryForm({ ...galleryForm, file, preview: reader.result });
-      };
+      reader.onloadend = () => setGalleryForm({ ...galleryForm, file, preview: reader.result });
       reader.readAsDataURL(file);
     }
   };
-
   const uploadGalleryImage = () => {
-    if (!galleryForm.file) {
-      alert("Select an image first");
-      return;
-    }
+    if (!galleryForm.file) { alert("Select an image first"); return; }
     setGalleryUploading(true);
     const formData = new FormData();
     formData.append("image", galleryForm.file);
     formData.append("caption", galleryForm.caption);
-
-    axios
-      .post(`${BASE_URL}/api/gallery`, formData, {
-        headers: { Authorization: token, "Content-Type": "multipart/form-data" }
-      })
-      .then(() => {
-        alert("✅ Gallery image uploaded");
-        setGalleryForm({ caption: "", file: null, preview: null });
-        const galleryInput = document.getElementById("galleryInput");
-        if (galleryInput) galleryInput.value = "";
-        loadGalleryImages(1);
-      })
-      .catch(() => alert("❌ Error uploading gallery image"))
-      .finally(() => setGalleryUploading(false));
+    axios.post(`${BASE_URL}/api/gallery`, formData, {
+      headers: { Authorization: token, "Content-Type": "multipart/form-data" }
+    }).then(() => {
+      alert("✅ Gallery image uploaded");
+      setGalleryForm({ caption: "", file: null, preview: null });
+      const el = document.getElementById("galleryInput");
+      if (el) el.value = "";
+      loadGalleryImages(1);
+    }).catch(() => alert("❌ Error"))
+    .finally(() => setGalleryUploading(false));
   };
-
   const deleteGalleryImage = (id) => {
     if (!window.confirm("Delete this gallery image?")) return;
-    axios
-      .delete(`${BASE_URL}/api/gallery/${id}`, { headers: { Authorization: token } })
-      .then(() => {
-        alert("✅ Gallery image deleted");
-        loadGalleryImages(1);
-      })
-      .catch(() => alert("❌ Error deleting gallery image"));
+    axios.delete(`${BASE_URL}/api/gallery/${id}`, { headers: { Authorization: token } })
+      .then(() => { alert("✅ Deleted"); loadGalleryImages(1); })
+      .catch(() => alert("❌ Error"));
   };
 
-  // ================= REGISTRATIONS HANDLERS =================
+  // ================= REGISTRATION HANDLERS =================
   const deleteRegistration = (id) => {
     if (!window.confirm("Are you sure you want to delete this record?")) return;
-    axios
-      .delete(`${BASE_URL}/api/dashboard/${registrationType}/${id}`, { headers: { Authorization: token } })
-      .then(() => {
-        setRegistrations(prev => prev.filter(r => r.id !== id));
-        loadRegSummary();
-        alert("✅ Registration deleted");
-      })
-      .catch(() => alert("❌ Error deleting registration"));
+    axios.delete(`${BASE_URL}/api/dashboard/${registrationType}/${id}`, { headers: { Authorization: token } })
+      .then(() => { setRegistrations(prev => prev.filter(r => r.id !== id)); loadRegSummary(); alert("✅ Deleted"); })
+      .catch(() => alert("❌ Error"));
   };
-
   const filteredRegs = registrations.filter(r => {
     if (!regSearch.trim()) return true;
     const q = regSearch.toLowerCase();
-    return (
-      r.full_name?.toLowerCase().includes(q) ||
-      r.email?.toLowerCase().includes(q) ||
-      r.mobile?.includes(q)
-    );
+    return r.full_name?.toLowerCase().includes(q) || r.email?.toLowerCase().includes(q) || r.mobile?.includes(q);
   });
 
   // ================= RENDER =================
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* ══════════════════════════════════
-           LEFT SIDEBAR
-      ══════════════════════════════════ */}
+
+      {/* ══ SIDEBAR ══ */}
       <div className="w-64 min-h-screen bg-gradient-to-b from-teal-700 to-teal-900 flex flex-col fixed left-0 top-0 z-30">
-        {/* Brand */}
         <div className="px-6 py-7 border-b border-teal-600">
           <h1 className="text-xl font-bold text-white">⚙️ Admin Panel</h1>
           <p className="text-teal-300 text-xs mt-1">Manage Website</p>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 px-3 py-6 space-y-1">
           {[
-            { key: "services", label: "Services", icon: "📋" },
-            { key: "images", label: "Images", icon: "🖼️" },
-            { key: "gallery", label: "Gallery", icon: "🎨" },
-            { key: "inquiries", label: "Inquiries", icon: "📩" },
-            { key: "deadlines", label: "Deadlines", icon: "⏰" },
-            { key: "registrations", label: "Registrations", icon: "📁" }
+            { key: "services",      label: "Services",       icon: "📋" },
+            { key: "images",        label: "Images",         icon: "🖼️" },
+            { key: "gallery",       label: "Gallery",        icon: "🎨" },
+            { key: "blogs",         label: "Blogs",          icon: "✍️" },   // ← NEW
+            { key: "inquiries",     label: "Inquiries",      icon: "📩" },
+            { key: "deadlines",     label: "Deadlines",      icon: "⏰" },
+            { key: "registrations", label: "Registrations",  icon: "📁" },
           ].map(tab => (
             <button
               key={tab.key}
@@ -1925,26 +4109,39 @@ export default function Dashboard() {
                   {unreadCount}
                 </span>
               )}
+              {tab.key === "blogs" && blogs.length > 0 && (
+                <span className="ml-auto bg-teal-400 text-white text-xs px-2 py-0.5 rounded-full">
+                  {blogs.length}
+                </span>
+              )}
             </button>
           ))}
         </nav>
 
-        {/* Back to Home */}
-        <div className="px-3 py-5 border-t border-teal-600">
+        <div className="px-3 py-5 border-t border-teal-600 space-y-1">
           <button
             onClick={() => navigate("/")}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-teal-100 hover:bg-teal-600 transition"
           >
-            <span>🏠</span>
-            <span>Back to Home</span>
+            <span>🏠</span><span>Back to Home</span>
+          </button>
+          <button
+            onClick={() => {
+              if (window.confirm("Are you sure you want to logout?")) {
+                localStorage.removeItem("token");
+                navigate("/admin");
+              }
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-red-300 hover:bg-red-600 hover:text-white transition"
+          >
+            <span>🚪</span><span>Logout</span>
           </button>
         </div>
       </div>
 
-      {/* ══════════════════════════════════
-           MAIN CONTENT
-      ══════════════════════════════════ */}
+      {/* ══ MAIN CONTENT ══ */}
       <div className="ml-64 flex-1 flex flex-col min-h-screen">
+
         {/* Top Bar */}
         <div className="bg-white border-b px-8 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
           <h2 className="text-lg font-bold text-gray-700 capitalize">
@@ -1960,9 +4157,185 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Page Content */}
         <div className="p-8">
-          {/* ================= GALLERY ================= */}
+
+          {/* ═══════════════ BLOGS TAB ═══════════════ */}
+          {activeTab === "blogs" && (
+            <>
+              {/* Add / Edit Form */}
+              <div className="bg-white p-6 rounded-xl shadow mb-8">
+                <h2 className="font-bold mb-4 text-lg text-gray-800">
+                  {editingBlogId ? "✏️ Edit Blog" : "✍️ Add New Blog"}
+                </h2>
+
+                <div className="grid md:grid-cols-2 gap-4 mb-3">
+                  <input
+                    className="border p-2 rounded-lg w-full focus:outline-none focus:border-teal-400"
+                    placeholder="Blog Title *"
+                    value={blogForm.title}
+                    onChange={e => setBlogForm({ ...blogForm, title: e.target.value })}
+                  />
+                  <input
+                    className="border p-2 rounded-lg w-full focus:outline-none focus:border-teal-400"
+                    placeholder="Author (default: Admin)"
+                    value={blogForm.author}
+                    onChange={e => setBlogForm({ ...blogForm, author: e.target.value })}
+                  />
+                </div>
+
+                <select
+                  className="border p-2 rounded-lg w-full mb-3 focus:outline-none focus:border-teal-400"
+                  value={blogForm.category}
+                  onChange={e => setBlogForm({ ...blogForm, category: e.target.value })}
+                >
+                  {BLOG_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+
+                <textarea
+                  className="border p-2 rounded-lg w-full mb-3 h-20 focus:outline-none focus:border-teal-400 resize-none"
+                  placeholder="Short Summary * (shown on home page card)"
+                  value={blogForm.summary}
+                  onChange={e => setBlogForm({ ...blogForm, summary: e.target.value })}
+                />
+
+                <textarea
+                  className="border p-2 rounded-lg w-full mb-3 h-40 focus:outline-none focus:border-teal-400 resize-y"
+                  placeholder="Full Content * (shown on blog detail page)"
+                  value={blogForm.content}
+                  onChange={e => setBlogForm({ ...blogForm, content: e.target.value })}
+                />
+
+                <div className="grid md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="text-sm text-gray-600 mb-1 block font-medium">
+                      Blog Cover Image {editingBlogId && "(leave empty to keep existing)"}
+                    </label>
+                    <input
+                      id="blogImageInput"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBlogImageChange}
+                      className="w-full text-sm"
+                    />
+                  </div>
+                  <div className="border-2 border-dashed border-gray-200 flex items-center justify-center h-32 rounded-lg bg-gray-50">
+                    {blogImagePreview ? (
+                      <img src={blogImagePreview} alt="Preview" className="h-full w-full rounded-lg object-cover" />
+                    ) : (
+                      <p className="text-gray-400 text-sm text-center">Image Preview</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={saveBlog}
+                    disabled={blogUploading}
+                    className="bg-teal-500 text-white px-8 py-2.5 rounded-lg font-semibold hover:bg-teal-600 disabled:opacity-50 transition"
+                  >
+                    {blogUploading ? "Saving..." : editingBlogId ? "Update Blog" : "Publish Blog"}
+                  </button>
+                  {editingBlogId && (
+                    <button
+                      onClick={resetBlogForm}
+                      className="bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-300 transition"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Blogs Table */}
+              <div className="bg-white rounded-xl shadow overflow-x-auto">
+                <div className="px-6 py-4 border-b flex items-center justify-between">
+                  <h3 className="font-bold text-gray-700">Published Blogs</h3>
+                  <span className="text-sm text-gray-400">{blogs.length} article(s)</span>
+                </div>
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      {["#", "Image", "Title", "Category", "Author", "Summary", "Date", "Actions"].map(h => (
+                        <th key={h} className="p-3 text-left whitespace-nowrap font-semibold text-gray-600">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {blogs.map((blog, i) => (
+                      <tr key={blog.id} className="border-t hover:bg-gray-50 transition">
+                        <td className="p-3 text-gray-500">{i + 1}</td>
+                        <td className="p-3">
+                          {blog.image_path ? (
+                            <img
+                              src={`${BASE_URL}/api/blogs/${blog.id}/image`}
+                              alt="Blog"
+                              className="h-12 w-20 object-cover rounded-lg"
+                            />
+                          ) : (
+                            <div className="h-12 w-20 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">
+                              No img
+                            </div>
+                          )}
+                        </td>
+                        <td className="p-3 font-medium">
+                          <p className="truncate w-40 text-gray-800">{blog.title}</p>
+                        </td>
+                        <td className="p-3">
+                          <span className="bg-teal-50 text-teal-700 border border-teal-200 rounded-full px-2.5 py-0.5 text-xs font-semibold">
+                            {blog.category}
+                          </span>
+                        </td>
+                        <td className="p-3 text-gray-600">{blog.author}</td>
+                        <td className="p-3">
+                          <p className="truncate w-48 text-gray-500">{blog.summary}</p>
+                        </td>
+                        <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
+                          {new Date(blog.created_at).toLocaleDateString("en-IN")}
+                        </td>
+                        <td className="p-3">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                setBlogForm({
+                                  title: blog.title,
+                                  summary: blog.summary,
+                                  content: blog.content || "",
+                                  author: blog.author,
+                                  category: blog.category,
+                                });
+                                setEditingBlogId(blog.id);
+                                setBlogImagePreview(null);
+                                setBlogImageFile(null);
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                              }}
+                              className="bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-blue-600 transition font-medium"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => deleteBlog(blog.id)}
+                              className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-red-600 transition font-medium"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {blogs.length === 0 && (
+                  <div className="p-12 text-center text-gray-400">
+                    <p className="text-4xl mb-3">📝</p>
+                    <p className="font-medium">No blogs published yet</p>
+                    <p className="text-sm mt-1">Use the form above to publish your first article</p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* ═══════════════ GALLERY TAB ═══════════════ */}
           {activeTab === "gallery" && (
             <>
               <div className="bg-white p-6 rounded shadow mb-8 grid md:grid-cols-2 gap-6">
@@ -1974,13 +4347,7 @@ export default function Dashboard() {
                     value={galleryForm.caption}
                     onChange={e => setGalleryForm({ ...galleryForm, caption: e.target.value })}
                   />
-                  <input
-                    id="galleryInput"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleGalleryImageChange}
-                    className="mb-2 w-full"
-                  />
+                  <input id="galleryInput" type="file" accept="image/*" onChange={handleGalleryImageChange} className="mb-2 w-full" />
                   <button
                     onClick={uploadGalleryImage}
                     disabled={galleryUploading}
@@ -1990,24 +4357,18 @@ export default function Dashboard() {
                   </button>
                 </div>
                 <div className="border-2 flex items-center justify-center h-48 rounded bg-gray-50">
-                  {galleryForm.preview ? (
-                    <img src={galleryForm.preview} alt="Preview" className="h-full rounded" />
-                  ) : (
-                    <p className="text-gray-400 text-center">Image Preview</p>
-                  )}
+                  {galleryForm.preview
+                    ? <img src={galleryForm.preview} alt="Preview" className="h-full rounded" />
+                    : <p className="text-gray-400 text-center">Image Preview</p>}
                 </div>
               </div>
-
-              {/* Gallery Images Table */}
               <div className="bg-white rounded shadow overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-100">
                     <tr>
-                      <th className="p-3 text-left">ID</th>
-                      <th className="p-3 text-left">Image</th>
-                      <th className="p-3 text-left">Caption</th>
-                      <th className="p-3 text-left">Uploaded</th>
-                      <th className="p-3 text-left">Action</th>
+                      {["ID","Image","Caption","Uploaded","Action"].map(h => (
+                        <th key={h} className="p-3 text-left">{h}</th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -2015,45 +4376,26 @@ export default function Dashboard() {
                       <tr key={img.id} className="border-t hover:bg-gray-50">
                         <td className="p-3">{img.id}</td>
                         <td className="p-3">
-                          <img
-                            src={`${BASE_URL}/${img.image_path}`}
-                            alt="Gallery"
-                            className="h-12 w-12 object-cover rounded"
-                          />
+                          <img src={`${BASE_URL}/${img.image_path}`} alt="Gallery" className="h-12 w-12 object-cover rounded" />
                         </td>
                         <td className="p-3 max-w-xs truncate">{img.caption || "—"}</td>
-                        <td className="p-3 text-gray-500 text-sm">
-                          {new Date(img.uploaded_at).toLocaleDateString("en-IN")}
-                        </td>
+                        <td className="p-3 text-gray-500 text-sm">{new Date(img.uploaded_at).toLocaleDateString("en-IN")}</td>
                         <td className="p-3">
-                          <button
-                            onClick={() => deleteGalleryImage(img.id)}
-                            className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
-                          >
-                            Delete
-                          </button>
+                          <button onClick={() => deleteGalleryImage(img.id)} className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                {galleryImages.length === 0 && (
-                  <div className="p-8 text-center text-gray-400">No gallery images yet</div>
-                )}
+                {galleryImages.length === 0 && <div className="p-8 text-center text-gray-400">No gallery images yet</div>}
               </div>
-
-              {/* Pagination */}
               {galleryPagination.pages > 1 && (
                 <div className="flex justify-center gap-2 mt-4">
                   {Array.from({ length: galleryPagination.pages }, (_, i) => i + 1).map(page => (
                     <button
                       key={page}
                       onClick={() => loadGalleryImages(page)}
-                      className={`px-4 py-2 rounded ${
-                        galleryPage === page
-                          ? "bg-teal-600 text-white"
-                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                      }`}
+                      className={`px-4 py-2 rounded ${galleryPage === page ? "bg-teal-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
                     >
                       {page}
                     </button>
@@ -2063,7 +4405,7 @@ export default function Dashboard() {
             </>
           )}
 
-          {/* ================= DEADLINES ================= */}
+          {/* ═══════════════ DEADLINES TAB ═══════════════ */}
           {activeTab === "deadlines" && (
             <div className="bg-white p-6 rounded shadow">
               <h2 className="font-bold mb-4 text-lg">Manage Tax Deadlines</h2>
@@ -2071,53 +4413,22 @@ export default function Dashboard() {
                 <option value="ITR">Income Tax</option>
                 <option value="GST">GST</option>
               </select>
-              <input
-                className="border p-2 w-full mb-2 rounded"
-                placeholder="Name (Ex: GSTR-1, Salaried)"
-                value={deadlineForm.name}
-                onChange={e => setDeadlineForm({ ...deadlineForm, name: e.target.value })}
-              />
-              <input
-                className="border p-2 w-full mb-2 rounded"
-                placeholder="Form / Type"
-                value={deadlineForm.form_type}
-                onChange={e => setDeadlineForm({ ...deadlineForm, form_type: e.target.value })}
-              />
+              <input className="border p-2 w-full mb-2 rounded" placeholder="Name (Ex: GSTR-1, Salaried)" value={deadlineForm.name} onChange={e => setDeadlineForm({ ...deadlineForm, name: e.target.value })} />
+              <input className="border p-2 w-full mb-2 rounded" placeholder="Form / Type" value={deadlineForm.form_type} onChange={e => setDeadlineForm({ ...deadlineForm, form_type: e.target.value })} />
               <select className="border p-2 w-full mb-2 rounded" value={deadlineForm.frequency} onChange={e => setDeadlineForm({ ...deadlineForm, frequency: e.target.value })}>
                 <option value="yearly">Yearly</option>
                 <option value="monthly">Monthly</option>
               </select>
-              <input
-                type="number"
-                className="border p-2 w-full mb-2 rounded"
-                placeholder="Rule Day (Example: 31 or 20)"
-                value={deadlineForm.rule_day}
-                onChange={e => setDeadlineForm({ ...deadlineForm, rule_day: e.target.value })}
-              />
+              <input type="number" className="border p-2 w-full mb-2 rounded" placeholder="Rule Day (e.g. 31 or 20)" value={deadlineForm.rule_day} onChange={e => setDeadlineForm({ ...deadlineForm, rule_day: e.target.value })} />
               {deadlineForm.frequency === "yearly" && (
-                <input
-                  type="number"
-                  className="border p-2 w-full mb-2 rounded"
-                  placeholder="Rule Month (1-12)"
-                  value={deadlineForm.rule_month}
-                  onChange={e => setDeadlineForm({ ...deadlineForm, rule_month: e.target.value })}
-                />
+                <input type="number" className="border p-2 w-full mb-2 rounded" placeholder="Rule Month (1-12)" value={deadlineForm.rule_month} onChange={e => setDeadlineForm({ ...deadlineForm, rule_month: e.target.value })} />
               )}
               <label className="flex items-center gap-2 mb-2">
-                <input
-                  type="checkbox"
-                  checked={deadlineForm.is_auto}
-                  onChange={e => setDeadlineForm({ ...deadlineForm, is_auto: e.target.checked })}
-                />
+                <input type="checkbox" checked={deadlineForm.is_auto} onChange={e => setDeadlineForm({ ...deadlineForm, is_auto: e.target.checked })} />
                 Auto Mode
               </label>
               {!deadlineForm.is_auto && (
-                <input
-                  type="date"
-                  className="border p-2 w-full mb-3 rounded"
-                  value={deadlineForm.manual_due_date}
-                  onChange={e => setDeadlineForm({ ...deadlineForm, manual_due_date: e.target.value })}
-                />
+                <input type="date" className="border p-2 w-full mb-3 rounded" value={deadlineForm.manual_due_date} onChange={e => setDeadlineForm({ ...deadlineForm, manual_due_date: e.target.value })} />
               )}
               <button onClick={saveDeadline} className="bg-teal-500 text-white w-full py-2 rounded font-semibold hover:bg-teal-600">
                 {editingId ? "Update Deadline" : "Save Deadline"}
@@ -2133,27 +4444,15 @@ export default function Dashboard() {
                       <button
                         onClick={() => {
                           setDeadlineForm({
-                            category: d.category,
-                            name: d.name,
-                            form_type: d.form_type,
-                            frequency: d.frequency,
-                            rule_day: d.rule_day,
-                            rule_month: d.rule_month,
-                            is_auto: d.is_auto,
-                            manual_due_date: d.manual_due_date ? d.manual_due_date.split("T")[0] : ""
+                            category: d.category, name: d.name, form_type: d.form_type,
+                            frequency: d.frequency, rule_day: d.rule_day, rule_month: d.rule_month,
+                            is_auto: d.is_auto, manual_due_date: d.manual_due_date ? d.manual_due_date.split("T")[0] : ""
                           });
                           setEditingId(d.id);
                         }}
                         className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteDeadline(d.id)}
-                        className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
-                      >
-                        Delete
-                      </button>
+                      >Edit</button>
+                      <button onClick={() => deleteDeadline(d.id)} className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Delete</button>
                     </div>
                   </div>
                 ))}
@@ -2161,54 +4460,22 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* ================= SERVICES ================= */}
+          {/* ═══════════════ SERVICES TAB ═══════════════ */}
           {activeTab === "services" && (
             <>
               <div className="bg-white p-6 rounded shadow mb-8">
                 <h2 className="font-bold mb-4">Add Service</h2>
-                <input
-                  className="w-full border p-2 mb-2 rounded"
-                  placeholder="Title"
-                  value={form.title}
-                  onChange={e => setForm({ ...form, title: e.target.value })}
-                />
-                <input
-                  className="w-full border p-2 mb-2 rounded"
-                  placeholder="Short Description"
-                  value={form.short_description}
-                  onChange={e => setForm({ ...form, short_description: e.target.value })}
-                />
-                <textarea
-                  className="w-full border p-2 mb-2 h-24 rounded"
-                  placeholder="Full Description"
-                  value={form.full_description}
-                  onChange={e => setForm({ ...form, full_description: e.target.value })}
-                />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleServiceImageChange}
-                  className="mb-2"
-                />
-                {serviceImagePreview && (
-                  <img src={serviceImagePreview} alt="Preview" className="h-32 mt-2 rounded" />
-                )}
-                <button
-                  onClick={addService}
-                  className="bg-teal-500 text-white w-full py-2 mt-3 rounded font-semibold hover:bg-teal-600"
-                >
-                  Add Service
-                </button>
+                <input className="w-full border p-2 mb-2 rounded" placeholder="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
+                <input className="w-full border p-2 mb-2 rounded" placeholder="Short Description" value={form.short_description} onChange={e => setForm({ ...form, short_description: e.target.value })} />
+                <textarea className="w-full border p-2 mb-2 h-24 rounded" placeholder="Full Description" value={form.full_description} onChange={e => setForm({ ...form, full_description: e.target.value })} />
+                <input type="file" accept="image/*" onChange={handleServiceImageChange} className="mb-2" />
+                {serviceImagePreview && <img src={serviceImagePreview} alt="Preview" className="h-32 mt-2 rounded" />}
+                <button onClick={addService} className="bg-teal-500 text-white w-full py-2 mt-3 rounded font-semibold hover:bg-teal-600">Add Service</button>
               </div>
               <div className="bg-white rounded shadow overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-100">
-                    <tr>
-                      <th className="p-3 text-left">ID</th>
-                      <th className="p-3 text-left">Title</th>
-                      <th className="p-3 text-left">Short Desc</th>
-                      <th className="p-3 text-left">Action</th>
-                    </tr>
+                    <tr>{["ID","Title","Short Desc","Action"].map(h => <th key={h} className="p-3 text-left">{h}</th>)}</tr>
                   </thead>
                   <tbody>
                     {services.map(s => (
@@ -2217,12 +4484,7 @@ export default function Dashboard() {
                         <td className="p-3 font-medium">{s.title}</td>
                         <td className="p-3">{s.short_description}</td>
                         <td className="p-3">
-                          <button
-                            onClick={() => deleteService(s.id)}
-                            className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
-                          >
-                            Delete
-                          </button>
+                          <button onClick={() => deleteService(s.id)} className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
                         </td>
                       </tr>
                     ))}
@@ -2232,55 +4494,31 @@ export default function Dashboard() {
             </>
           )}
 
-          {/* ================= IMAGES ================= */}
+          {/* ═══════════════ IMAGES TAB ═══════════════ */}
           {activeTab === "images" && (
             <>
               <div className="bg-white p-6 rounded shadow mb-8 grid md:grid-cols-2 gap-6">
                 <div>
                   <h2 className="font-bold mb-3">Upload Image</h2>
-                  <select
-                    className="w-full border p-2 mb-3 rounded"
-                    value={imageForm.image_type}
-                    onChange={e => setImageForm({ ...imageForm, image_type: e.target.value })}
-                  >
+                  <select className="w-full border p-2 mb-3 rounded" value={imageForm.image_type} onChange={e => setImageForm({ ...imageForm, image_type: e.target.value })}>
                     <option value="logo">Logo</option>
                     <option value="owner">Owner</option>
                     <option value="clients_logo">Clients</option>
                     <option value="hero">Hero</option>
                   </select>
-                  <input
-                    id="imageInput"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="mb-2"
-                  />
-                  <button
-                    onClick={uploadImage}
-                    disabled={uploading}
-                    className="bg-teal-500 text-white w-full py-2 mt-3 rounded font-semibold hover:bg-teal-600 disabled:opacity-50"
-                  >
+                  <input id="imageInput" type="file" accept="image/*" onChange={handleImageChange} className="mb-2" />
+                  <button onClick={uploadImage} disabled={uploading} className="bg-teal-500 text-white w-full py-2 mt-3 rounded font-semibold hover:bg-teal-600 disabled:opacity-50">
                     {uploading ? "Uploading..." : "Upload"}
                   </button>
                 </div>
                 <div className="border-2 flex items-center justify-center h-48 rounded bg-gray-50">
-                  {imageForm.preview ? (
-                    <img src={imageForm.preview} alt="Preview" className="h-full rounded" />
-                  ) : (
-                    <p className="text-gray-400 text-center">Image Preview</p>
-                  )}
+                  {imageForm.preview ? <img src={imageForm.preview} alt="Preview" className="h-full rounded" /> : <p className="text-gray-400 text-center">Image Preview</p>}
                 </div>
               </div>
               <div className="bg-white rounded shadow overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-100">
-                    <tr>
-                      <th className="p-3 text-left">ID</th>
-                      <th className="p-3 text-left">Type</th>
-                      <th className="p-3 text-left">Name</th>
-                      <th className="p-3 text-left">Preview</th>
-                      <th className="p-3 text-left">Action</th>
-                    </tr>
+                    <tr>{["ID","Type","Name","Preview","Action"].map(h => <th key={h} className="p-3 text-left">{h}</th>)}</tr>
                   </thead>
                   <tbody>
                     {images.map(img => (
@@ -2289,22 +4527,10 @@ export default function Dashboard() {
                         <td className="p-3">{img.image_type}</td>
                         <td className="p-3">{img.image_name}</td>
                         <td className="p-3">
-                          <a
-                            href={`${BASE_URL}/uploads/${img.image_name}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:underline"
-                          >
-                            View
-                          </a>
+                          <a href={`${BASE_URL}/uploads/${img.image_name}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">View</a>
                         </td>
                         <td className="p-3">
-                          <button
-                            onClick={() => deleteImage(img.id)}
-                            className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
-                          >
-                            Delete
-                          </button>
+                          <button onClick={() => deleteImage(img.id)} className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
                         </td>
                       </tr>
                     ))}
@@ -2314,105 +4540,69 @@ export default function Dashboard() {
             </>
           )}
 
-          {/* ================= INQUIRIES ================= */}
+          {/* ═══════════════ INQUIRIES TAB ═══════════════ */}
           {activeTab === "inquiries" && (
             <div className="bg-white rounded shadow overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-100">
-                  <tr>
-                    <th className="p-3 text-left">ID</th>
-                    <th className="p-3 text-left">Name</th>
-                    <th className="p-3 text-left">Email</th>
-                    <th className="p-3 text-left">Phone</th>
-                    <th className="p-3 text-left">Message</th>
-                    <th className="p-3 text-left">Status</th>
-                  </tr>
+                  <tr>{["ID","Name","Email","Phone","Message","Status"].map(h => <th key={h} className="p-3 text-left">{h}</th>)}</tr>
                 </thead>
                 <tbody>
                   {inquiries.map(i => (
-                    <tr
-                      key={i.id}
-                      className={`border-t hover:bg-gray-50 ${i.is_read === 0 ? "bg-yellow-50" : ""}`}
-                    >
+                    <tr key={i.id} className={`border-t hover:bg-gray-50 ${i.is_read === 0 ? "bg-yellow-50" : ""}`}>
                       <td className="p-3">{i.id}</td>
                       <td className="p-3 font-medium">
                         {i.name}
                         {i.visit_count > 1 && (
-                          <span className="ml-2 bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full font-semibold">
-                            🔁 Returning ({i.visit_count}x)
-                          </span>
+                          <span className="ml-2 bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full font-semibold">🔁 Returning ({i.visit_count}x)</span>
                         )}
                       </td>
                       <td className="p-3">{i.email}</td>
                       <td className="p-3">{i.phone}</td>
                       <td className="p-3 max-w-xs truncate">{i.message}</td>
                       <td className="p-3">
-                        {i.is_read === 0 ? (
-                          <button
-                            onClick={() => markAsRead(i.id)}
-                            className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
-                          >
-                            Mark Read
-                          </button>
-                        ) : (
-                          <span className="text-green-600 font-semibold">✅ Read</span>
-                        )}
+                        {i.is_read === 0
+                          ? <button onClick={() => markAsRead(i.id)} className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">Mark Read</button>
+                          : <span className="text-green-600 font-semibold">✅ Read</span>}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              {inquiries.length === 0 && (
-                <div className="p-8 text-center text-gray-400">No inquiries found</div>
-              )}
+              {inquiries.length === 0 && <div className="p-8 text-center text-gray-400">No inquiries found</div>}
             </div>
           )}
 
-          {/* ================= REGISTRATIONS ================= */}
+          {/* ═══════════════ REGISTRATIONS TAB ═══════════════ */}
           {activeTab === "registrations" && (
             <div>
-              {/* Summary Cards */}
               <div className="grid grid-cols-3 gap-4 mb-6">
                 {[
                   { key: "income-tax", label: "Income Tax", count: regSummary.income_tax },
-                  { key: "gst", label: "GST", count: regSummary.gst },
-                  { key: "udyam", label: "Udyam", count: regSummary.udyam }
+                  { key: "gst",        label: "GST",        count: regSummary.gst },
+                  { key: "udyam",      label: "Udyam",      count: regSummary.udyam },
                 ].map(card => (
                   <button
                     key={card.key}
                     onClick={() => setRegistrationType(card.key)}
-                    className={`bg-white rounded-lg shadow p-5 text-left border-l-4 transition hover:-translate-y-0.5 ${
-                      registrationType === card.key ? "border-teal-500" : "border-gray-200"
-                    }`}
+                    className={`bg-white rounded-lg shadow p-5 text-left border-l-4 transition hover:-translate-y-0.5 ${registrationType === card.key ? "border-teal-500" : "border-gray-200"}`}
                   >
                     <div className="text-3xl font-bold text-teal-600">{card.count}</div>
                     <div className="text-sm text-gray-500 mt-1">📁 {card.label} Registrations</div>
                   </button>
                 ))}
               </div>
-
-              {/* Sub Tabs */}
               <div className="flex gap-3 mb-4">
-                {[
-                  { key: "income-tax", label: "📑 Income Tax" },
-                  { key: "gst", label: "🏪 GST" },
-                  { key: "udyam", label: "🏭 Udyam" }
-                ].map(t => (
+                {[{ key: "income-tax", label: "📑 Income Tax" }, { key: "gst", label: "🏪 GST" }, { key: "udyam", label: "🏭 Udyam" }].map(t => (
                   <button
                     key={t.key}
                     onClick={() => setRegistrationType(t.key)}
-                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-                      registrationType === t.key
-                        ? "bg-teal-500 text-white"
-                        : "bg-white text-gray-500 border border-gray-200 hover:border-teal-300"
-                    }`}
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${registrationType === t.key ? "bg-teal-500 text-white" : "bg-white text-gray-500 border border-gray-200 hover:border-teal-300"}`}
                   >
                     {t.label}
                   </button>
                 ))}
               </div>
-
-              {/* Search */}
               <div className="flex justify-between items-center mb-4">
                 <input
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-64 focus:outline-none focus:border-teal-400"
@@ -2422,8 +4612,6 @@ export default function Dashboard() {
                 />
                 <span className="text-sm text-gray-500">{filteredRegs.length} record(s)</span>
               </div>
-
-              {/* Table */}
               <div className="bg-white rounded-lg shadow overflow-x-auto">
                 {regLoading ? (
                   <div className="p-12 text-center text-gray-400">⏳ Loading...</div>
@@ -2434,41 +4622,22 @@ export default function Dashboard() {
                     <thead className="bg-gray-100 sticky top-0">
                       {registrationType === "income-tax" && (
                         <tr>
-                          {[
-                            "#", "Name", "Email", "Mobile", "PAN", "Aadhaar", "Salary",
-                            "House Prop.", "Pension", "Agri.", "Cap. Gain", "Int. Savings",
-                            "Int. Deposit", "Int. Refund", "Enh. Comp", "Other Int.",
-                            "PAN Photo", "Aadhaar Front", "Aadhaar Back", "Date", "Action"
-                          ].map(h => (
-                            <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">
-                              {h}
-                            </th>
+                          {["#","Name","Email","Mobile","PAN","Aadhaar","Salary","House Prop.","Pension","Agri.","Cap. Gain","Int. Savings","Int. Deposit","Int. Refund","Enh. Comp","Other Int.","PAN Photo","Aadhaar Front","Aadhaar Back","Date","Action"].map(h => (
+                            <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">{h}</th>
                           ))}
                         </tr>
                       )}
                       {registrationType === "gst" && (
                         <tr>
-                          {[
-                            "#", "Name", "Email", "Mobile", "PAN", "Aadhaar", "PAN Photo",
-                            "Aadhaar", "Proprietor", "Address Proof", "Shop Act", "Udyam Cert",
-                            "Shop Photo", "Bank Proof", "Signature", "Date", "Action"
-                          ].map(h => (
-                            <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">
-                              {h}
-                            </th>
+                          {["#","Name","Email","Mobile","PAN","Aadhaar","PAN Photo","Aadhaar","Proprietor","Address Proof","Shop Act","Udyam Cert","Shop Photo","Bank Proof","Signature","Date","Action"].map(h => (
+                            <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">{h}</th>
                           ))}
                         </tr>
                       )}
                       {registrationType === "udyam" && (
                         <tr>
-                          {[
-                            "#", "Name", "Email", "Mobile", "PAN", "Aadhaar", "PAN Photo",
-                            "Aadhaar", "Proprietor", "Address Proof", "Shop Act", "Bank Proof",
-                            "Signature", "Date", "Action"
-                          ].map(h => (
-                            <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">
-                              {h}
-                            </th>
+                          {["#","Name","Email","Mobile","PAN","Aadhaar","PAN Photo","Aadhaar","Proprietor","Address Proof","Shop Act","Bank Proof","Signature","Date","Action"].map(h => (
+                            <th key={h} className="p-3 text-left whitespace-nowrap font-semibold">{h}</th>
                           ))}
                         </tr>
                       )}
@@ -2478,134 +4647,67 @@ export default function Dashboard() {
                         <tr key={row.id} className="border-t hover:bg-gray-50">
                           {registrationType === "income-tax" && (
                             <>
-                              <td className="p-3">{i + 1}</td>
+                              <td className="p-3">{i+1}</td>
                               <td className="p-3 font-medium whitespace-nowrap">{row.full_name}</td>
                               <td className="p-3 whitespace-nowrap">{row.email}</td>
                               <td className="p-3">{row.mobile}</td>
                               <td className="p-3">{row.pan_number}</td>
                               <td className="p-3">{row.aadhaar_number}</td>
-                              <td className="p-3">₹{row.salary_income || 0}</td>
-                              <td className="p-3">₹{row.house_property_income || 0}</td>
-                              <td className="p-3">₹{row.family_pension_income || 0}</td>
-                              <td className="p-3">₹{row.agricultural_income || 0}</td>
-                              <td className="p-3">₹{row.capital_gain_112a || 0}</td>
-                              <td className="p-3">₹{row.interest_savings || 0}</td>
-                              <td className="p-3">₹{row.interest_deposits || 0}</td>
-                              <td className="p-3">₹{row.interest_refund || 0}</td>
-                              <td className="p-3">₹{row.interest_enhanced_comp || 0}</td>
-                              <td className="p-3">₹{row.other_interest_income || 0}</td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.pan_photo} label="PAN" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.aadhaar_photo} label="Front" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.aadhaar_back_photo} label="Back" />
-                              </td>
-                              <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
-                                {new Date(row.created_at).toLocaleDateString("en-IN")}
-                              </td>
-                              <td className="p-3">
-                                <button
-                                  onClick={() => deleteRegistration(row.id)}
-                                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition"
-                                >
-                                  Delete
-                                </button>
-                              </td>
+                              <td className="p-3">₹{row.salary_income||0}</td>
+                              <td className="p-3">₹{row.house_property_income||0}</td>
+                              <td className="p-3">₹{row.family_pension_income||0}</td>
+                              <td className="p-3">₹{row.agricultural_income||0}</td>
+                              <td className="p-3">₹{row.capital_gain_112a||0}</td>
+                              <td className="p-3">₹{row.interest_savings||0}</td>
+                              <td className="p-3">₹{row.interest_deposits||0}</td>
+                              <td className="p-3">₹{row.interest_refund||0}</td>
+                              <td className="p-3">₹{row.interest_enhanced_comp||0}</td>
+                              <td className="p-3">₹{row.other_interest_income||0}</td>
+                              <td className="p-3"><FileBtn filePath={row.pan_photo} label="PAN" /></td>
+                              <td className="p-3"><FileBtn filePath={row.aadhaar_photo} label="Front" /></td>
+                              <td className="p-3"><FileBtn filePath={row.aadhaar_back_photo} label="Back" /></td>
+                              <td className="p-3 text-gray-400 text-xs whitespace-nowrap">{new Date(row.created_at).toLocaleDateString("en-IN")}</td>
+                              <td className="p-3"><button onClick={() => deleteRegistration(row.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition">Delete</button></td>
                             </>
                           )}
-
                           {registrationType === "gst" && (
                             <>
-                              <td className="p-3">{i + 1}</td>
+                              <td className="p-3">{i+1}</td>
                               <td className="p-3 font-medium whitespace-nowrap">{row.full_name}</td>
                               <td className="p-3 whitespace-nowrap">{row.email}</td>
                               <td className="p-3">{row.mobile}</td>
                               <td className="p-3">{row.pan_number}</td>
                               <td className="p-3">{row.aadhaar_number}</td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.pan_photo} label="PAN" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.aadhaar_photo} label="Aadhaar" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.proprietor_photo} label="Proprietor" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.business_address_proof} label="Address" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.shop_act_license} label="Shop Act" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.udyam_certificate} label="Udyam" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.shop_photo} label="Shop" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.bank_proof} label="Bank" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.signature} label="Sign" />
-                              </td>
-                              <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
-                                {new Date(row.created_at).toLocaleDateString("en-IN")}
-                              </td>
-                              <td className="p-3">
-                                <button
-                                  onClick={() => deleteRegistration(row.id)}
-                                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition"
-                                >
-                                  Delete
-                                </button>
-                              </td>
+                              <td className="p-3"><FileBtn filePath={row.pan_photo} label="PAN" /></td>
+                              <td className="p-3"><FileBtn filePath={row.aadhaar_photo} label="Aadhaar" /></td>
+                              <td className="p-3"><FileBtn filePath={row.proprietor_photo} label="Proprietor" /></td>
+                              <td className="p-3"><FileBtn filePath={row.business_address_proof} label="Address" /></td>
+                              <td className="p-3"><FileBtn filePath={row.shop_act_license} label="Shop Act" /></td>
+                              <td className="p-3"><FileBtn filePath={row.udyam_certificate} label="Udyam" /></td>
+                              <td className="p-3"><FileBtn filePath={row.shop_photo} label="Shop" /></td>
+                              <td className="p-3"><FileBtn filePath={row.bank_proof} label="Bank" /></td>
+                              <td className="p-3"><FileBtn filePath={row.signature} label="Sign" /></td>
+                              <td className="p-3 text-gray-400 text-xs whitespace-nowrap">{new Date(row.created_at).toLocaleDateString("en-IN")}</td>
+                              <td className="p-3"><button onClick={() => deleteRegistration(row.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition">Delete</button></td>
                             </>
                           )}
-
                           {registrationType === "udyam" && (
                             <>
-                              <td className="p-3">{i + 1}</td>
+                              <td className="p-3">{i+1}</td>
                               <td className="p-3 font-medium whitespace-nowrap">{row.full_name}</td>
                               <td className="p-3 whitespace-nowrap">{row.email}</td>
                               <td className="p-3">{row.mobile}</td>
                               <td className="p-3">{row.pan_number}</td>
                               <td className="p-3">{row.aadhaar_number}</td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.pan_photo} label="PAN" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.aadhaar_photo} label="Aadhaar" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.proprietor_photo} label="Proprietor" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.business_address_proof} label="Address" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.shop_act_license} label="Shop Act" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.bank_proof} label="Bank" />
-                              </td>
-                              <td className="p-3">
-                                <FileBtn filePath={row.signature} label="Sign" />
-                              </td>
-                              <td className="p-3 text-gray-400 text-xs whitespace-nowrap">
-                                {new Date(row.created_at).toLocaleDateString("en-IN")}
-                              </td>
-                              <td className="p-3">
-                                <button
-                                  onClick={() => deleteRegistration(row.id)}
-                                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition"
-                                >
-                                  Delete
-                                </button>
-                              </td>
+                              <td className="p-3"><FileBtn filePath={row.pan_photo} label="PAN" /></td>
+                              <td className="p-3"><FileBtn filePath={row.aadhaar_photo} label="Aadhaar" /></td>
+                              <td className="p-3"><FileBtn filePath={row.proprietor_photo} label="Proprietor" /></td>
+                              <td className="p-3"><FileBtn filePath={row.business_address_proof} label="Address" /></td>
+                              <td className="p-3"><FileBtn filePath={row.shop_act_license} label="Shop Act" /></td>
+                              <td className="p-3"><FileBtn filePath={row.bank_proof} label="Bank" /></td>
+                              <td className="p-3"><FileBtn filePath={row.signature} label="Sign" /></td>
+                              <td className="p-3 text-gray-400 text-xs whitespace-nowrap">{new Date(row.created_at).toLocaleDateString("en-IN")}</td>
+                              <td className="p-3"><button onClick={() => deleteRegistration(row.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition">Delete</button></td>
                             </>
                           )}
                         </tr>
@@ -2616,6 +4718,7 @@ export default function Dashboard() {
               </div>
             </div>
           )}
+
         </div>
       </div>
     </div>
