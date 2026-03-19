@@ -1867,17 +1867,16 @@ export default function Home() {
       });
 
     axios
-      .get(`${API_URL}/api/images/admin/all`)
-      .then((res) => {
-        const logos = res.data.filter(
-          (img) => img.image_type === "clients_logo",
-        );
-        setClientsLogos(logos);
-      })
-      .catch((err) =>
-        console.log("Could not load clients logos:", err.message),
-      );
-
+  .get(`${API_URL}/api/images/admin/all`)
+  .then((res) => {
+    const logos = res.data.filter(
+      (img) => img.image_type === "clients_logo",
+    );
+    setClientsLogos(logos);
+  })
+  .catch((err) =>
+    console.log("Could not load clients logos:", err.message),
+  );
     axios
       .get(`${API_URL}/api/services`)
       .then((res) => setServiceCards(res.data))

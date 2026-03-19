@@ -19,7 +19,8 @@ export default function BlogsSection() {
     axios
       .get(`${BASE_URL}/api/blogs`)
       .then((res) => {
-setBlogs(res.data.data || res.data);        setLoading(false);
+  setBlogs(res.data);
+          setLoading(false);
       })
       .catch((err) => {
         console.error("Could not load blogs:", err.message);
