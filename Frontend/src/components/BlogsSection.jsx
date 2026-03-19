@@ -19,8 +19,7 @@ export default function BlogsSection() {
     axios
       .get(`${BASE_URL}/api/blogs`)
       .then((res) => {
-        setBlogs(res.data);
-        setLoading(false);
+setBlogs(res.data.data || res.data);        setLoading(false);
       })
       .catch((err) => {
         console.error("Could not load blogs:", err.message);
@@ -28,10 +27,11 @@ export default function BlogsSection() {
       });
   }, []);
 
-  const filtered =
-    activeCategory === "All"
-      ? blogs
-      : blogs.filter((b) => b.category === activeCategory);
+  const filtered = Array.isArray(blogs)
+  ? activeCategory === "All"
+    ? blogs
+    : blogs.filter((b) => b.category === activeCategory)
+  : [];
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString("en-IN", {
