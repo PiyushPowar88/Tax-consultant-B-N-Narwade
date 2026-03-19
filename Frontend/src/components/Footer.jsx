@@ -158,7 +158,7 @@ export default function Footer() {
 
               <li className="flex gap-3">
                 <FaGlobe />
-                www.bnnarwade.com
+                www.bnnarwadeandco.com
               </li>
 
             </ul>
