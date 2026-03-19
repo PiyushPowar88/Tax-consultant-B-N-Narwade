@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 // import BackButton from "../components/BackButton";
 import { useNavigate } from "react-router-dom";
+import API_URL from '../config';
 
 export default function Location() {
   const navigate = useNavigate();

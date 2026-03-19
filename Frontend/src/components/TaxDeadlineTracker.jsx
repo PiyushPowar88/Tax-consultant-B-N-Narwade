@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import API_URL from '../config';
+
 
 /* ================= DATE HELPERS ================= */
 
@@ -47,7 +49,7 @@ export default function TaxDeadlineTracker() {
   /* Load Deadlines */
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/tax-deadlines")
+      .get("${API_URL}/api/tax-deadlines")
       .then((res) => setData(res.data))
       .catch((err) => console.log(err));
   }, []);

@@ -4,33 +4,27 @@ import App from "./App";
 import "./index.css";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL || "https://bnnarwadeandco.com";
 
 // ================================
 // Load Favicon from API
 // ================================
 axios
-  .get("http://localhost:5000/api/images/type/logo")
+  .get(`${API_URL}/api/images/type/logo`)
   .then((res) => {
-
     const logoId = res.data.id;
-
-    const faviconUrl = `http://localhost:5000/api/images/${logoId}`;
-
+    const faviconUrl = `${API_URL}/api/images/${logoId}`;
     let link = document.querySelector("link[rel~='icon']");
-
     if (!link) {
       link = document.createElement("link");
       link.rel = "icon";
       document.head.appendChild(link);
     }
-
     link.href = faviconUrl;
-
   })
   .catch((err) => {
     console.log("Failed to load favicon:", err.message);
   });
-
 
 // ================================
 // Render App

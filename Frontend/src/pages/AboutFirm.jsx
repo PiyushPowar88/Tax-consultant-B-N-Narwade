@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link,useNavigate } from "react-router-dom";
+import API_URL from '../config';
+
 
 const AboutFirm = () => {
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const AboutFirm = () => {
   // Fetch Company Logo
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/images/type/logo")
+      .get(`${API_URL}/api/images/type/logo`)
       .then((res) => setLogoImageId(res.data.id))
       .catch((err) => console.log("Logo not found:", err.message));
   }, []);
@@ -28,7 +30,7 @@ const AboutFirm = () => {
 
             {logoImageId && (
               <img
-                src={`http://localhost:5000/api/images/${logoImageId}`}
+                src={`${API_URL}/api/images/${logoImageId}`}
                 alt="B N Narwade Logo"
                 className="h-14 w-auto object-contain"
               />
@@ -96,7 +98,7 @@ const AboutFirm = () => {
           {/* Logo */}
           {logoImageId && (
             <img
-              src={`http://localhost:5000/api/images/${logoImageId}`}
+              src={`${API_URL}/api/images/${logoImageId}`}
               alt="B N Narwade Logo"
               className="h-28 w-auto object-contain drop-shadow-md"
             />

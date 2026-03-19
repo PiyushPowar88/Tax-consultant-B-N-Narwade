@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import API_URL from '../config';
 
-const BASE_URL = "http://localhost:5000";
+
+const BASE_URL = API_URL;
 
 const CATEGORIES = ["All", "GST", "Income Tax", "Business", "Compliance", "General"];
 

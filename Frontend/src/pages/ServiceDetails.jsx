@@ -2,6 +2,8 @@ import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_URL from '../config';
+
 
 export default function ServiceDetails() {
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ export default function ServiceDetails() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/services/${id}`)
+      .get(`${API_URL}/api/services/${id}`)
       .then((res) => setService(res.data))
       .catch((err) => console.log(err.message));
   }, [id]);
@@ -68,7 +70,7 @@ export default function ServiceDetails() {
             {service.image && (
               <div className="flex justify-center mb-10">
                 <img
-                  src={`http://localhost:5000/api/admin/services/${service.id}/image`}
+                  src={`${API_URL}/api/admin/services/${service.id}/image`}
                   alt={service.title}
                   className="w-full max-w-xl rounded-xl shadow-lg object-cover"
                 />

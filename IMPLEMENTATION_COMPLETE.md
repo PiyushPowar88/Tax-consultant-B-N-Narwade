@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS images (
 ```bash
 cd Backend
 npm install  # multer already added to package.json
-npm start    # Server on http://localhost:5000
+npm start    # Server on ${API_URL}
 ```
 
 ### Step 3: Frontend

@@ -54,7 +54,7 @@ cd Backend
 npm install  # (if needed)
 npm start    # or: npm run dev
 ```
-Server will run on http://localhost:5000
+Server will run on ${API_URL}
 
 ### 3️⃣ Start Frontend
 ```bash

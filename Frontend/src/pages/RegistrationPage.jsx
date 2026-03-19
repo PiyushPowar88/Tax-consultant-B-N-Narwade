@@ -3,6 +3,7 @@ import IncomeTaxRegistration from "./IncomeTaxRegistration";
 import GSTRegistration from "./GSTRegistration";
 import UdyamRegistration from "./UdyamRegistration";
 import { useNavigate } from "react-router-dom";
+import API_URL from '../config';
 
 const RegistrationPage = () => {
   const navigate = useNavigate();

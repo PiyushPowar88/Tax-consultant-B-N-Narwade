@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API_URL from '../config';
+
 
 import {
   FaLinkedinIn,
@@ -23,7 +25,7 @@ export default function Footer() {
   useEffect(() => {
 
     axios
-      .get("http://localhost:5000/api/images/type/logo")
+      .get("${API_URL}/api/images/type/logo")
       .then(res => setLogoImageId(res.data.id))
       .catch(err => console.log("Footer logo not found:", err.message));
 
@@ -49,7 +51,7 @@ export default function Footer() {
               {/* Logo */}
               {logoImageId && (
                 <img
-                  src={`http://localhost:5000/api/images/${logoImageId}`}
+                  src={`${API_URL}/api/images/${logoImageId}`}
                   alt="B N Narwade Logo"
                   className="h-14 w-auto bg-white p-1 rounded"
                 />

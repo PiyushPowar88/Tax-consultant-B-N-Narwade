@@ -8,14 +8,14 @@
 //   useEffect(() => {
 //     // Fetch hero background image
 //     axios
-//       .get("http://localhost:5000/api/images/type/hero")
+//       .get("${API_URL}/api/images/type/hero")
 //       .then((res) => setHeroImageId(res.data.id))
 //       .catch((err) => console.log("Hero image not found:", err.message));
 //   }, []);
 
 //   const backgroundStyle = heroImageId
 //     ? {
-//         backgroundImage: `url('http://localhost:5000/api/images/${heroImageId}')`,
+//         backgroundImage: `url('${API_URL}/api/images/${heroImageId}')`,
 //         backgroundSize: "cover",
 //         backgroundPosition: "center",
 //         backgroundRepeat: "no-repeat",
@@ -399,6 +399,8 @@
 
 import { useState, useEffect, useId } from "react";
 import { Link } from "react-router-dom";
+import API_URL from '../config';
+
 
 // Arrow Icon Component
 const ArrowRight = ({ className }) => (

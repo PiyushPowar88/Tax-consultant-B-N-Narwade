@@ -9,7 +9,7 @@
 
 //   useEffect(() => {
 //     // Fetch company logo
-//     axios.get("http://localhost:5000/api/images/type/logo")
+//     axios.get("${API_URL}/api/images/type/logo")
 //       .then(res => setLogoImageId(res.data.id))
 //       .catch(err => console.log("Logo not found:", err.message));
 //   }, []);
@@ -27,7 +27,7 @@
 //           {/* Logo Image */}
 // {logoImageId && (
 //   <img 
-//     src={`http://localhost:5000/api/images/${logoImageId}`}
+//     src={`${API_URL}/api/images/${logoImageId}`}
 //     alt="B N Narwade Logo"
 //     className="h-20 w-35"
 //   />
@@ -226,6 +226,8 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API_URL from '../config';
+
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -233,7 +235,7 @@ export default function Navbar() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/images/type/logo")
+      .get("${API_URL}/api/images/type/logo")
       .then((res) => setLogoImageId(res.data.id))
       .catch((err) => console.log("Logo not found:", err.message));
   }, []);
@@ -246,7 +248,7 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
           {logoImageId && (
             <img
-              src={`http://localhost:5000/api/images/${logoImageId}`}
+              src={`${API_URL}/api/images/${logoImageId}`}
               alt="Logo"
               className="h-16 w-auto"
             />

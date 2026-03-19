@@ -2,6 +2,8 @@ import Navbar from "../components/Navbar";
 import { useState } from "react";
 import axios from "axios";
 // import BackButton from "../components/BackButton";
+import API_URL from '../config';
+
 
 export default function Contact() {
   const [form, setForm] = useState({
@@ -36,7 +38,7 @@ export default function Contact() {
     setSuccessMessage("");
 
     try {
-      await axios.post("http://localhost:5000/api/inquiry", form);
+      await axios.post(`${API_URL}/api/inquiry`, form);
       setSuccessMessage("✅ Thank you! Your inquiry has been submitted. You'll receive a confirmation email shortly.");
       setForm({ name: "", email: "", phone: "", message: "" });
       

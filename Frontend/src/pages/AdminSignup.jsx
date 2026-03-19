@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import API_URL from '../config';
+
 
 export default function AdminSignup() {
   const [form, setForm] = useState({
@@ -11,7 +13,7 @@ export default function AdminSignup() {
   const signup = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/admin/signup",
+        `${API_URL}/api/admin/signup`,
         form
       );
 

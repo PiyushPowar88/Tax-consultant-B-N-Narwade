@@ -1,7 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-const BASE_URL = "http://localhost:5000";
+import API_URL from '../config';
+
+
+const BASE_URL = `${API_URL}`;
 
 export default function GalleryPage() {
       const navigate = useNavigate();

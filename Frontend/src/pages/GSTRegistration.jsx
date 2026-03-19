@@ -63,7 +63,7 @@
 
 //     try {
 //       await axios.post(
-//         "http://localhost:5000/api/registration/gst",
+//         "${API_URL}/api/registration/gst",
 //         data,
 //         { headers: { "Content-Type": "multipart/form-data" } }
 //       );
@@ -307,6 +307,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import API_URL from '../config';
 
 const GSTRegistration = () => {
   const [formData, setFormData] = useState({
@@ -369,7 +370,7 @@ const GSTRegistration = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/registration/gst",
+        `${API_URL}/api/registration/gst`,
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

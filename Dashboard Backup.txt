@@ -25,7 +25,7 @@ export default function Dashboard() {
 
   // ===== Load Services =====
   const loadServices = () => {
-    axios.get("http://localhost:5000/api/admin/services", {
+    axios.get("${API_URL}/api/admin/services", {
       headers: { Authorization: token }
     })
     .then(res => setServices(res.data))
@@ -37,7 +37,7 @@ export default function Dashboard() {
 
   // ===== Load Images =====
   const loadImages = () => {
-    axios.get("http://localhost:5000/api/images/admin/all", {
+    axios.get("${API_URL}/api/images/admin/all", {
       headers: { Authorization: token }
     })
     .then(res => setImages(res.data))
@@ -66,7 +66,7 @@ export default function Dashboard() {
 
   // ===== ADD SERVICE (UPDATED ONLY HERE) =====
   const addService = () => {
-    axios.post("http://localhost:5000/api/admin/services", form, {
+    axios.post("${API_URL}/api/admin/services", form, {
       headers: { Authorization: token }
     })
     .then((res) => {
@@ -79,7 +79,7 @@ export default function Dashboard() {
         formData.append("service_id", serviceId);
 
         // ✅ NEW ROUTE
-        axios.post("http://localhost:5000/api/admin/services/upload-image", formData, {
+        axios.post("${API_URL}/api/admin/services/upload-image", formData, {
           headers: {
             Authorization: token,
             "Content-Type": "multipart/form-data"
@@ -108,7 +108,7 @@ export default function Dashboard() {
 
   // ===== Delete Service =====
   const deleteService = (id) => {
-    axios.delete(`http://localhost:5000/api/admin/services/${id}`, {
+    axios.delete(`${API_URL}/api/admin/services/${id}`, {
       headers: { Authorization: token }
     })
     .then(() => loadServices());
@@ -143,7 +143,7 @@ export default function Dashboard() {
     formData.append("image_type", imageForm.image_type);
     formData.append("image_name", imageForm.file.name);
 
-    axios.post("http://localhost:5000/api/images/upload", formData, {
+    axios.post("${API_URL}/api/images/upload", formData, {
       headers: {
         Authorization: token,
         "Content-Type": "multipart/form-data"
@@ -164,7 +164,7 @@ export default function Dashboard() {
   // ===== Delete Image =====
   const deleteImage = (id) => {
     if (window.confirm("Are you sure you want to delete this image?")) {
-      axios.delete(`http://localhost:5000/api/images/${id}`, {
+      axios.delete(`${API_URL}/api/images/${id}`, {
         headers: { Authorization: token }
       })
       .then(() => {

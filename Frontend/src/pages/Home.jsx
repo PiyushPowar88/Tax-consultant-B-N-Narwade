@@ -213,7 +213,7 @@
 //   // Fetch owner image on component mount
 //   useEffect(() => {
 //     axios
-//       .get("http://localhost:5000/api/images/type/owner")
+//       .get("${API_URL}/api/images/type/owner")
 //       .then((res) => {
 //         setOwnerImageId(res.data.id);
 //         setLoadingImage(false);
@@ -225,7 +225,7 @@
 
 //     // Fetch all clients logos
 //     axios
-//       .get("http://localhost:5000/api/images/admin/all")
+//       .get("${API_URL}/api/images/admin/all")
 //       .then((res) => {
 //         const logos = res.data.filter(
 //           (img) => img.image_type === "clients_logo",
@@ -238,7 +238,7 @@
 
 //     // Fetch services for carousel
 //     axios
-//       .get("http://localhost:5000/api/services")
+//       .get("${API_URL}/api/services")
 //       .then((res) => setServiceCards(res.data))
 //       .catch((err) => console.log("Services error:", err.message));
 //   }, []);
@@ -305,7 +305,7 @@
 //                     initial={{ opacity: 0 }}
 //                     animate={{ opacity: 1 }}
 //                     transition={{ duration: 0.5 }}
-//                     src={`http://localhost:5000/api/images/${ownerImageId}`}
+//                     src={`${API_URL}/api/images/${ownerImageId}`}
 //                     alt="Company Owner"
 //                     className="w-full h-[600px] object-cover"
 //                   />
@@ -431,7 +431,7 @@
 //                       whileHover={{ y: -10 }}
 //                     >
 //                       <motion.img
-//                         src={`http://localhost:5000/api/admin/services/${card.id}/image`}
+//                         src={`${API_URL}/api/admin/services/${card.id}/image`}
 //                         alt={card.title}
 //                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
 //                         whileHover={{ scale: 1.1 }}
@@ -764,7 +764,7 @@
 //                       className="flex items-center justify-center bg-gray-50 rounded-xl p-6 h-32 hover:shadow-lg transition-all duration-300"
 //                     >
 //                       <img
-//                         src={`http://localhost:5000/api/images/${logo.id}`}
+//                         src={`${API_URL}/api/images/${logo.id}`}
 //                         alt={logo.image_name}
 //                         className="max-w-full max-h-full object-contain"
 //                       />
@@ -1084,7 +1084,7 @@
 //   // Fetch data
 //   useEffect(() => {
 //     axios
-//       .get("http://localhost:5000/api/images/type/owner")
+//       .get("${API_URL}/api/images/type/owner")
 //       .then((res) => {
 //         setOwnerImageId(res.data.id);
 //         setLoadingImage(false);
@@ -1095,7 +1095,7 @@
 //       });
 
 //     axios
-//       .get("http://localhost:5000/api/images/admin/all")
+//       .get("${API_URL}/api/images/admin/all")
 //       .then((res) => {
 //         const logos = res.data.filter(
 //           (img) => img.image_type === "clients_logo",
@@ -1107,7 +1107,7 @@
 //       );
 
 //     axios
-//       .get("http://localhost:5000/api/services")
+//       .get("${API_URL}/api/services")
 //       .then((res) => setServiceCards(res.data))
 //       .catch((err) => console.log("Services error:", err.message));
 //   }, []);
@@ -1175,7 +1175,7 @@
 //                 initial={{ opacity: 0 }}
 //                 animate={{ opacity: 1 }}
 //                 transition={{ duration: 0.5 }}
-//                 src={`http://localhost:5000/api/images/${ownerImageId}`}
+//                 src={`${API_URL}/api/images/${ownerImageId}`}
 //                 alt="Company Owner"
 //                 className="w-full h-auto object-cover"
 //               />
@@ -1311,7 +1311,7 @@
 //                       whileHover={{ y: -10 }}
 //                     >
 //                       <motion.img
-//                         src={`http://localhost:5000/api/admin/services/${card.id}/image`}
+//                         src={`${API_URL}/api/admin/services/${card.id}/image`}
 //                         alt={card.title}
 //                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
 //                         whileHover={{ scale: 1.1 }}
@@ -1680,6 +1680,7 @@ import Footer from "../components/Footer";
 import HomeGallery from "../components/homegallery"; // ✅ FIXED: Import from components not pages
 import TaxDeadlineTracker from "../components/TaxDeadlineTracker";
 import BlogsSection from "../components/BlogsSection";
+import API_URL from '../config';
 
 
 import axios from "axios";
@@ -1855,7 +1856,7 @@ export default function Home() {
   // Fetch data
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/images/type/owner")
+      .get(`${API_URL}/api/images/type/owner`)
       .then((res) => {
         setOwnerImageId(res.data.id);
         setLoadingImage(false);
@@ -1866,7 +1867,7 @@ export default function Home() {
       });
 
     axios
-      .get("http://localhost:5000/api/images/admin/all")
+      .get(`${API_URL}/api/images/admin/all`)
       .then((res) => {
         const logos = res.data.filter(
           (img) => img.image_type === "clients_logo",
@@ -1878,7 +1879,7 @@ export default function Home() {
       );
 
     axios
-      .get("http://localhost:5000/api/services")
+      .get(`${API_URL}/api/services`)
       .then((res) => setServiceCards(res.data))
       .catch((err) => console.log("Services error:", err.message));
   }, []);
@@ -1946,7 +1947,7 @@ export default function Home() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5 }}
-                      src={`http://localhost:5000/api/images/${ownerImageId}`}
+                      src={`${API_URL}/api/images/${ownerImageId}`}
                       alt="Company Owner"
                       className="w-full h-auto object-cover"
                     />
@@ -2071,7 +2072,7 @@ export default function Home() {
                       whileHover={{ y: -10 }}
                     >
                       <motion.img
-                        src={`http://localhost:5000/api/admin/services/${card.id}/image`}
+                        src={`${API_URL}/api/admin/services/${card.id}/image`}
                         alt={card.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         whileHover={{ scale: 1.1 }}

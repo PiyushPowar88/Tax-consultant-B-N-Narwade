@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import API_URL from '../config';
+
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -16,7 +18,7 @@ export default function AdminLogin() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/admin/login",
+        `${API_URL}/api/admin/login`,
         { email, password }
       );
 

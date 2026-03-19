@@ -2,7 +2,7 @@
 // import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 
-// const BASE_URL = "http://localhost:5000";
+// const BASE_URL = "${API_URL}";
 
 // const FileBtn = ({ filePath, label }) => {
 //   if (!filePath) return <span className="text-gray-300 text-xs">—</span>;
@@ -557,19 +557,19 @@
 //   // ================= LOAD DATA =================
 
 //   const loadServices = () => {
-//     axios.get("http://localhost:5000/api/admin/services", {
+//     axios.get("${API_URL}/api/admin/services", {
 //       headers: { Authorization: token }
 //     }).then(res => setServices(res.data));
 //   };
 
 //   const loadImages = () => {
-//     axios.get("http://localhost:5000/api/images/admin/all", {
+//     axios.get("${API_URL}/api/images/admin/all", {
 //       headers: { Authorization: token }
 //     }).then(res => setImages(res.data));
 //   };
 
 //   const loadInquiries = () => {
-//     axios.get("http://localhost:5000/api/inquiry", {
+//     axios.get("${API_URL}/api/inquiry", {
 //       headers: { Authorization: token }
 //     }).then(res => {
 //       setInquiries(res.data);
@@ -594,7 +594,7 @@
 
 //   const loadDeadlines = () => {
 //   axios
-//     .get("http://localhost:5000/api/tax-deadlines")
+//     .get("${API_URL}/api/tax-deadlines")
 //     .then((res) => {
 //       setDeadlines(res.data);
 //     })
@@ -648,7 +648,7 @@
 //   if (editingId) {
 
 //     axios.put(
-//       `http://localhost:5000/api/tax-deadlines/${editingId}`,
+//       `${API_URL}/api/tax-deadlines/${editingId}`,
 //       payload,
 //       {
 //         headers: { Authorization: token }
@@ -670,7 +670,7 @@
 // console.log("Sending Payload:", payload);
 
 //     axios.post(
-//       "http://localhost:5000/api/tax-deadlines",
+//       "${API_URL}/api/tax-deadlines",
 //       payload,
 //       {
 //         headers: { Authorization: token }
@@ -695,7 +695,7 @@
 //   if (!window.confirm("Delete this deadline?")) return;
 
 //   axios.delete(
-//     `http://localhost:5000/api/tax-deadlines/${id}`,
+//     `${API_URL}/api/tax-deadlines/${id}`,
 //     {
 //       headers: { Authorization: token }
 //     }
@@ -726,7 +726,7 @@
 
 
 //   const addService = () => {
-//     axios.post("http://localhost:5000/api/admin/services", form, {
+//     axios.post("${API_URL}/api/admin/services", form, {
 //       headers: { Authorization: token }
 //     }).then(res => {
 
@@ -738,7 +738,7 @@
 //         fd.append("image", serviceImageFile);
 //         fd.append("service_id", serviceId);
 
-//         axios.post("http://localhost:5000/api/admin/services/upload-image", fd, {
+//         axios.post("${API_URL}/api/admin/services/upload-image", fd, {
 //           headers: {
 //             Authorization: token,
 //             "Content-Type": "multipart/form-data"
@@ -766,7 +766,7 @@
 
 
 //   const deleteService = (id) => {
-//     axios.delete(`http://localhost:5000/api/admin/services/${id}`, {
+//     axios.delete(`${API_URL}/api/admin/services/${id}`, {
 //       headers: { Authorization: token }
 //     }).then(() => loadServices());
 //   };
@@ -799,7 +799,7 @@
 //     fd.append("image_type", imageForm.image_type);
 //     fd.append("image_name", imageForm.file.name);
 
-//     axios.post("http://localhost:5000/api/images/upload", fd, {
+//     axios.post("${API_URL}/api/images/upload", fd, {
 //       headers: {
 //         Authorization: token,
 //         "Content-Type": "multipart/form-data"
@@ -826,7 +826,7 @@
 
 //     if (!window.confirm("Delete Image?")) return;
 
-//     axios.delete(`http://localhost:5000/api/images/${id}`, {
+//     axios.delete(`${API_URL}/api/images/${id}`, {
 //       headers: { Authorization: token }
 //     }).then(() => loadImages());
 //   };
@@ -837,7 +837,7 @@
 
 //   const markAsRead = (id) => {
 
-//     axios.put(`http://localhost:5000/api/inquiry/read/${id}`, {}, {
+//     axios.put(`${API_URL}/api/inquiry/read/${id}`, {}, {
 //       headers: { Authorization: token }
 //     }).then(() => {
 //       loadInquiries();
@@ -1321,7 +1321,7 @@
 
 //                       <td>
 //                         <a
-//                           href={`http://localhost:5000/api/images/${img.id}`}
+//                           href={`${API_URL}/api/images/${img.id}`}
 //                           target="_blank"
 //                           className="text-blue-600"
 //                         >
@@ -1378,7 +1378,7 @@
 //         <button
 //           onClick={() =>
 //             window.open(
-//               `http://localhost:5000/api/export/${registrationType}`,
+//               `${API_URL}/api/export/${registrationType}`,
 //               "_blank"
 //             )
 //           }
@@ -1518,7 +1518,7 @@
 // import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 
-// const BASE_URL = "http://localhost:5000";
+// const BASE_URL = "${API_URL}";
 
 // const FileBtn = ({ filePath, label }) => {
 //   if (!filePath) return <span className="text-gray-300 text-xs">—</span>;
@@ -2714,7 +2714,7 @@
 // import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 
-// const BASE_URL = "http://localhost:5000";
+// const BASE_URL = "${API_URL}";
 
 // const FileBtn = ({ filePath, label }) => {
 //   if (!filePath) return <span className="text-gray-300 text-xs">—</span>;
@@ -3724,8 +3724,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from '../config';
 
-const BASE_URL = "http://localhost:5000";
+
+const BASE_URL = API_URL;
 
 const FileBtn = ({ filePath, label }) => {
   if (!filePath) return <span className="text-gray-300 text-xs">—</span>;

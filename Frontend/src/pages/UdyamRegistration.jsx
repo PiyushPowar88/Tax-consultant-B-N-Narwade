@@ -63,7 +63,7 @@
 
 //     try {
 //       await axios.post(
-//         "http://localhost:5000/api/registration/udyam",
+//         "${API_URL}/api/registration/udyam",
 //         data,
 //         { headers: { "Content-Type": "multipart/form-data" } }
 //       );
@@ -303,6 +303,8 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import API_URL from '../config';
+
 
 const UdyamRegistration = () => {
   const [formData, setFormData] = useState({
@@ -365,7 +367,7 @@ const UdyamRegistration = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/registration/udyam",
+        `${API_URL}/api/registration/udyam`,
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

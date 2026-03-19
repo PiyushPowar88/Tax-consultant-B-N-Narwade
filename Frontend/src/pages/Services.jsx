@@ -2,6 +2,8 @@ import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from '../config';
+
 // import BackButton from "../components/BackButton";
 export default function Services() {
 
@@ -9,7 +11,7 @@ export default function Services() {
   const navigate = useNavigate();
 
   const loadServices = () => {
-    axios.get("http://localhost:5000/api/services")
+    axios.get(`${API_URL}/api/services`)
       .then(res => setServices(res.data))
       .catch(err => console.log(err.message));
   };
@@ -70,7 +72,7 @@ export default function Services() {
                 {/* Image */}
                 {service.image && (
                   <img
-                    src={`http://localhost:5000/api/admin/services/${service.id}/image`}
+                    src={`${API_URL}/api/admin/services/${service.id}/image`}
                     alt={service.title}
                     className="w-full h-48 object-cover"
                   />

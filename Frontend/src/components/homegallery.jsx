@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import API_URL from '../config';
 
-const BASE_URL = "http://localhost:5000";
+
+const BASE_URL = API_URL;
 
 export default function HomeGallery() {
   const [images, setImages] = useState([]);

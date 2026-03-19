@@ -104,7 +104,7 @@
 
 //     try {
 //       await axios.post(
-//         "http://localhost:5000/api/registration/income-tax",
+//         "${API_URL}/api/registration/income-tax",
 //         data,
 //         { headers: { "Content-Type": "multipart/form-data" } }
 //       );
@@ -361,6 +361,8 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import API_URL from '../config';
+
 
 /* ✅ Move IncomeField outside to prevent re-mount */
 const IncomeField = ({
@@ -460,7 +462,7 @@ const IncomeTaxRegistration = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/registration/income-tax",
+        `${API_URL}/api/registration/income-tax`,
         data,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

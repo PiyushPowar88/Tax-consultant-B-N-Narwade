@@ -113,7 +113,7 @@ The Home page now automatically fetches and displays the latest owner image:
 ```javascript
 // Fetches image with type 'owner' from database
 // Falls back to placeholder if no image found
-<img src={`http://localhost:5000/api/images/${ownerImageId}`} alt="Company Owner" />
+<img src={`${API_URL}/api/images/${ownerImageId}`} alt="Company Owner" />
 ```
 
 ### Admin Dashboard - Image Management
