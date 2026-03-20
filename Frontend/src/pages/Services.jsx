@@ -70,13 +70,13 @@ export default function Services() {
               >
 
                 {/* Image */}
-                {service.image && (
-                  <img
-                    src={`${API_URL}/api/admin/services/${service.id}/image`}
-                    alt={service.title}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
+                {service.image_url && (
+  <img
+    src={`${API_URL}${service.image_url}`}
+    alt={service.title}
+    className="w-full h-48 object-cover"
+  />
+)}
 
                 {/* Info */}
                 <div className="p-6 text-center">

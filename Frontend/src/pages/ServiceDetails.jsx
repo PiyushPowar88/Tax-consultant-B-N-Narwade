@@ -67,15 +67,15 @@ export default function ServiceDetails() {
             </h1>
 
             {/* Image */}
-            {service.image && (
-              <div className="flex justify-center mb-10">
-                <img
-                  src={`${API_URL}/api/admin/services/${service.id}/image`}
-                  alt={service.title}
-                  className="w-full max-w-xl rounded-xl shadow-lg object-cover"
-                />
-              </div>
-            )}
+         {service.image_url && (
+  <div className="flex justify-center mb-10">
+    <img
+      src={`${API_URL}${service.image_url}`}
+      alt={service.title}
+      className="w-full max-w-xl rounded-xl shadow-lg object-cover"
+    />
+  </div>
+)}
 
             {/* Divider */}
             <div className="w-24 h-1 bg-blue-600 mx-auto mb-8 rounded"></div>

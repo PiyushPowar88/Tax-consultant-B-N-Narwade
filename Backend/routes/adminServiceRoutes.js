@@ -2,11 +2,23 @@ import express from "express";
 import db from "../config/db.js";
 import { verifyAdmin } from "../middleware/authMiddleware.js";
 import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 const router = express.Router();
 
-/* ===== Multer Memory Storage ===== */
-const storage = multer.memoryStorage();
+/* ===== Multer Disk Storage ===== */
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = "uploads/services";
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `service_${Date.now()}${ext}`);
+  }
+});
 
 const upload = multer({
   storage,
@@ -21,7 +33,6 @@ const upload = multer({
 
 router.post("/services", verifyAdmin, (req, res) => {
   const { title, short_description, full_description } = req.body;
-
   db.query(
     "INSERT INTO services (title, short_description, full_description) VALUES (?,?,?)",
     [title, short_description, full_description],
@@ -33,15 +44,17 @@ router.post("/services", verifyAdmin, (req, res) => {
 });
 
 router.get("/services", verifyAdmin, (req, res) => {
-  db.query("SELECT * FROM services", (err, result) => {
-    if (err) return res.status(500).send(err);
-    res.send(result);
-  });
+  db.query(
+    "SELECT id, title, short_description, full_description, image_url, created_at FROM services",
+    (err, result) => {
+      if (err) return res.status(500).send(err);
+      res.send(result);
+    }
+  );
 });
 
 router.put("/services/:id", verifyAdmin, (req, res) => {
   const { title, short_description, full_description } = req.body;
-
   db.query(
     "UPDATE services SET title=?, short_description=?, full_description=? WHERE id=?",
     [title, short_description, full_description, req.params.id],
@@ -53,9 +66,15 @@ router.put("/services/:id", verifyAdmin, (req, res) => {
 });
 
 router.delete("/services/:id", verifyAdmin, (req, res) => {
-  db.query("DELETE FROM services WHERE id=?", [req.params.id], (err) => {
-    if (err) return res.status(500).send(err);
-    res.send({ message: "Service Deleted" });
+  db.query("SELECT image_url FROM services WHERE id=?", [req.params.id], (err, result) => {
+    if (result && result[0]?.image_url) {
+      const filePath = result[0].image_url.replace("/uploads", "uploads");
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+    db.query("DELETE FROM services WHERE id=?", [req.params.id], (err) => {
+      if (err) return res.status(500).send(err);
+      res.send({ message: "Service Deleted" });
+    });
   });
 });
 
@@ -72,17 +91,14 @@ router.post(
       return res.status(400).json({ message: "No image uploaded" });
     }
 
-    const imageBuffer = req.file.buffer;
+    const image_url = `/uploads/services/${req.file.filename}`;
 
     db.query(
-      "UPDATE services SET image=? WHERE id=?",
-      [imageBuffer, service_id],
+      "UPDATE services SET image_url=? WHERE id=?",
+      [image_url, service_id],
       (err) => {
-        if (err) {
-          console.log("DB Image Save Error:", err);
-          return res.status(500).json({ message: "Image save failed" });
-        }
-        res.json({ message: "Image uploaded successfully" });
+        if (err) return res.status(500).json({ message: "Image save failed" });
+        res.json({ message: "Image uploaded successfully", image_url });
       }
     );
   }
@@ -92,19 +108,129 @@ router.post(
 
 router.get("/services/:id/image", (req, res) => {
   db.query(
-    "SELECT image FROM services WHERE id=?",
+    "SELECT image_url FROM services WHERE id=?",
     [req.params.id],
     (err, result) => {
       if (err) return res.status(500).end();
-
-      if (result.length === 0 || !result[0].image) {
+      if (result.length === 0 || !result[0].image_url) {
         return res.status(404).end();
       }
-
-      res.set("Content-Type", "image/png");
-      res.send(result[0].image);
+      res.redirect(result[0].image_url);
     }
   );
 });
 
 export default router;
+
+
+
+// import express from "express";
+// import db from "../config/db.js";
+// import { verifyAdmin } from "../middleware/authMiddleware.js";
+// import multer from "multer";
+
+// const router = express.Router();
+
+// /* ===== Multer Memory Storage ===== */
+// const storage = multer.memoryStorage();
+
+// const upload = multer({
+//   storage,
+//   fileFilter: (req, file, cb) => {
+//     const allowed = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+//     if (allowed.includes(file.mimetype)) cb(null, true);
+//     else cb(new Error("Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed."));
+//   }
+// });
+
+// /* ================= SERVICES CRUD ================= */
+
+// router.post("/services", verifyAdmin, (req, res) => {
+//   const { title, short_description, full_description } = req.body;
+
+//   db.query(
+//     "INSERT INTO services (title, short_description, full_description) VALUES (?,?,?)",
+//     [title, short_description, full_description],
+//     (err, result) => {
+//       if (err) return res.status(500).send(err);
+//       res.send({ message: "Service Added", id: result.insertId });
+//     }
+//   );
+// });
+
+// router.get("/services", verifyAdmin, (req, res) => {
+//   db.query("SELECT * FROM services", (err, result) => {
+//     if (err) return res.status(500).send(err);
+//     res.send(result);
+//   });
+// });
+
+// router.put("/services/:id", verifyAdmin, (req, res) => {
+//   const { title, short_description, full_description } = req.body;
+
+//   db.query(
+//     "UPDATE services SET title=?, short_description=?, full_description=? WHERE id=?",
+//     [title, short_description, full_description, req.params.id],
+//     (err) => {
+//       if (err) return res.status(500).send(err);
+//       res.send({ message: "Service Updated" });
+//     }
+//   );
+// });
+
+// router.delete("/services/:id", verifyAdmin, (req, res) => {
+//   db.query("DELETE FROM services WHERE id=?", [req.params.id], (err) => {
+//     if (err) return res.status(500).send(err);
+//     res.send({ message: "Service Deleted" });
+//   });
+// });
+
+// /* ================= IMAGE UPLOAD ================= */
+
+// router.post(
+//   "/services/upload-image",
+//   verifyAdmin,
+//   upload.single("image"),
+//   (req, res) => {
+//     const { service_id } = req.body;
+
+//     if (!req.file) {
+//       return res.status(400).json({ message: "No image uploaded" });
+//     }
+
+//     const imageBuffer = req.file.buffer;
+
+//     db.query(
+//       "UPDATE services SET image=? WHERE id=?",
+//       [imageBuffer, service_id],
+//       (err) => {
+//         if (err) {
+//           console.log("DB Image Save Error:", err);
+//           return res.status(500).json({ message: "Image save failed" });
+//         }
+//         res.json({ message: "Image uploaded successfully" });
+//       }
+//     );
+//   }
+// );
+
+// /* ================= IMAGE FETCH ================= */
+
+// router.get("/services/:id/image", (req, res) => {
+//   db.query(
+//     "SELECT image FROM services WHERE id=?",
+//     [req.params.id],
+//     (err, result) => {
+//       if (err) return res.status(500).end();
+
+//       if (result.length === 0 || !result[0].image) {
+//         return res.status(404).end();
+//       }
+
+//       res.set("Content-Type", "image/png");
+//       res.send(result[0].image);
+//     }
+//   );
+// });
+
+// export default router;
