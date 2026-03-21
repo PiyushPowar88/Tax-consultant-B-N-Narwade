@@ -235,7 +235,7 @@ export default function Navbar() {
 
   useEffect(() => {
     axios
-      .get("${API_URL}/api/images/type/logo")
+      .get(`${API_URL}/api/images/type/logo`)
       .then((res) => setLogoImageId(res.data.id))
       .catch((err) => console.log("Logo not found:", err.message));
   }, []);

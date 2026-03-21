@@ -3,10 +3,10 @@ import jwt from "jsonwebtoken";
 export const verifyAdmin = (req, res, next) => {
   const token = req.headers.authorization;
 
-  console.log("🔐 Token Received:", token);
+  // console.log("🔐 Token Received:", token);
 
   if (!token) {
-    console.log("❌ No Token Provided");
+    // console.log("❌ No Token Provided");
     return res.status(401).json({ message: "No token provided" });
   }
 
